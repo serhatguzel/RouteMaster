@@ -4,7 +4,10 @@ services:
     build: .
     container_name: routemaster_app
     ports:
-      - "8080:8080"
+      - "8080:8080" # Application
+      - "5005:5005" # DEBUG
     environment:
       - SPRING_PROFILES_ACTIVE=default
+      # Java'ya "Debug modunda başla"
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
     restart: unless-stopped

@@ -1,6 +1,5 @@
 package com.routemaster.RouteMaster.service;
 
-import com.routemaster.RouteMaster.dto.LocationDto;
 import com.routemaster.RouteMaster.dto.TransportationDto;
 import com.routemaster.RouteMaster.entity.Location;
 import com.routemaster.RouteMaster.entity.Transportation;
