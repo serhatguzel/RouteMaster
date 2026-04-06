@@ -1,6 +1,10 @@
 package com.routemaster.RouteMaster.dto;
 
+import com.routemaster.RouteMaster.enums.LocationType;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -30,4 +34,9 @@ public class LocationDto {
     @Size(min = 3, max = 10, message = "Location code must be between 3 and 10 characters")
     @Pattern(regexp = "^[A-Z0-9]+$", message = "Location code must be alphanumeric and uppercase")
     private String locationCode;
+
+    @NotNull(message = "Location type is required")
+    @Enumerated(EnumType.STRING)
+    private LocationType type;
+
 }

@@ -47,6 +47,10 @@ public class TransportationService {
 
         Transportation transportation = transportationMapper.toEntity(transportationDto);
 
+        if(!transportation.isValidRoute()){
+            throw new RuntimeException("Origin and Destination locations cannot be the same.");
+        }
+
         transportation.setOrigin(origin);
         transportation.setDestination(destination);
 

@@ -1,7 +1,9 @@
 package com.routemaster.RouteMaster.entity;
 
+import com.routemaster.RouteMaster.enums.LocationType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -39,4 +41,8 @@ public class Location {
     @Pattern(regexp = "^[A-Z0-9]+$", message = "Location code must be alphanumeric and uppercase")
     @Column(name = "location_code", unique = true, length = 10, nullable = false)
     private String locationCode;
+
+    @NotNull(message = "Location type is required")
+    @Enumerated(EnumType.STRING)
+    private LocationType type;
 }

@@ -5,6 +5,8 @@ import com.routemaster.RouteMaster.entity.Location;
 import com.routemaster.RouteMaster.mapper.LocationMapper;
 import com.routemaster.RouteMaster.repository.LocationRepository;
 import java.util.List;
+
+import com.routemaster.RouteMaster.repository.TransportationRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -14,10 +16,13 @@ public class LocationService {
 
     private final LocationRepository locationRepository;
 
+    private final TransportationRepository transportationRepository;
+
     private final LocationMapper locationMapper;
 
-    public LocationService(LocationRepository locationRepository, LocationMapper locationMapper) {
+    public LocationService(LocationRepository locationRepository, TransportationRepository transportationRepository, LocationMapper locationMapper) {
         this.locationRepository = locationRepository;
+        this.transportationRepository = transportationRepository;
         this.locationMapper = locationMapper;
     }
 
@@ -40,12 +45,7 @@ public class LocationService {
             throw new RuntimeException("Location code already exists: " + locationDto.getLocationCode());
         }
 
-        Location location = Location.builder()
-                .name(locationDto.getName())
-                .country(locationDto.getCountry())
-                .city(locationDto.getCity())
-                .locationCode(locationDto.getLocationCode().toUpperCase())
-                .build();
+        Location location = locationMapper.toEntity(locationDto);
 
         Location savedLocation = locationRepository.save(location);
         return locationMapper.toDto(savedLocation);
@@ -69,10 +69,9 @@ public class LocationService {
             throw new EntityNotFoundException("Location not found with id: " + id);
         }
 
-        /** TODO düzenleme yapılacak */
-        // 2. İlişkisel veri kontrolü (Opsiyonel ama profesyonel bir dokunuş)
-        // Eğer bu lokasyon bir Transportation içinde kullanılıyorsa,
-        // DB seviyesinde hata almamak için burada özel bir kontrol yapılabilir.
+        if (transportationRepository.existsByOriginIdOrDestinationId(id, id)) {
+            throw new RuntimeException("This location is in use by a transportation and cannot be deleted.");
+        }
 
         locationRepository.deleteById(id);
     }

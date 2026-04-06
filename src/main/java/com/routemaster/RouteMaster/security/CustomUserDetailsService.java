@@ -29,7 +29,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         // 2. Kullanıcının rollerini Spring Security'nin anlayacağı formata (GrantedAuthority) çevir
         Collection<GrantedAuthority> authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName())) // Spring Security rollerin başında ROLE_ arar!
+                .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toList());
 
         // 3. Spring Security'nin kendi User nesnesine dönüştürüp teslim et

@@ -1,6 +1,6 @@
 export const ROLES = {
-    ADMIN: 'ADMIN',
-    AGENCY: 'AGENCY'
+    ADMIN: 'ROLE_ADMIN',
+    AGENCY: 'ROLE_AGENCY'
 };
 
 export const PATHS = {

@@ -42,7 +42,7 @@ public class AuthController {
 
         String role = userDetails.getAuthorities().stream()
                 .findFirst()
-                .map(auth -> auth.getAuthority().replace("ROLE_", ""))
+                .map(auth -> auth.getAuthority())
                 .orElse("USER");
 
         return ResponseEntity.ok(new AuthResponseDto(jwt, role));
