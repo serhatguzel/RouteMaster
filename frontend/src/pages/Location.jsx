@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
-import { MapPin, Plus, Trash2, Loader2, Search, Edit, Globe, Activity } from 'lucide-react';
+import { MapPin, Trash2, Loader2, Search, Edit } from 'lucide-react';
 import { fetchAirports, getHierarchicalData, getAirportsByCity } from '../services/airportService';
 
 const LocationPage = () => {
@@ -162,7 +162,7 @@ const LocationPage = () => {
                             <input
                                 type="text"
                                 placeholder="Search code or name..."
-                                className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 outline-none text-sm w-64 text-slate-900 transition-all shadow-sm"
+                                className="pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-slate-900 outline-none text-sm w-72 text-slate-900 transition-all shadow-sm"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -171,7 +171,7 @@ const LocationPage = () => {
                             onClick={handleAdd}
                             className="flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-xl hover:bg-slate-800 transition-all font-bold text-sm shadow-lg shadow-slate-100 active:scale-95"
                         >
-                            <Plus size={18} /> Add New
+                            Add
                         </button>
                     </div>
                 </div>
@@ -189,7 +189,6 @@ const LocationPage = () => {
                                     <th className="px-6 py-4 font-bold text-slate-500 text-[11px] font-bold tracking-widest uppercase tracking-widest">Code</th>
                                     <th className="px-6 py-4 font-bold text-slate-500 text-[11px] font-bold tracking-widest uppercase tracking-widest">Name</th>
                                     <th className="px-6 py-4 font-bold text-slate-500 text-[11px] font-bold tracking-widest uppercase tracking-widest">City/Country</th>
-                                    <th className="px-6 py-4 font-bold text-slate-500 text-[11px] font-bold tracking-widest uppercase tracking-widest text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50">
@@ -222,13 +221,15 @@ const LocationPage = () => {
                                                 <div className="flex items-center justify-end gap-2">
                                                     <button
                                                         onClick={() => handleEdit(loc)}
-                                                        className="p-2 text-slate-300 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-all"
+                                                        className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100/50 rounded-xl transition-all duration-200"
+                                                        title="Edit"
                                                     >
                                                         <Edit size={18} />
                                                     </button>
                                                     <button
                                                         onClick={() => handleDeleteClick(loc.id)}
-                                                        className="p-2 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                                                        className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200"
+                                                        title="Delete"
                                                     >
                                                         <Trash2 size={18} />
                                                     </button>
@@ -256,7 +257,7 @@ const LocationPage = () => {
                                     <label className="block text-[11px] font-bold tracking-widest font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">Country</label>
                                     <select
                                         required
-                                        className={`w-full px-4 py-3 bg-slate-50 border rounded-2xl focus:ring-2 focus:ring-slate-900 outline-none transition-all text-slate-900 font-bold text-sm cursor-pointer ${errors.country ? 'border-red-500 ring-2 ring-red-50' : 'border-slate-100'
+                                        className={`w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-slate-900 outline-none transition-all text-slate-900 font-bold text-sm cursor-pointer ${errors.country ? 'border-red-500 ring-2 ring-red-50' : ''
                                             }`}
                                         value={formData.country}
                                         onChange={(e) => setFormData({
@@ -279,7 +280,7 @@ const LocationPage = () => {
                                     <select
                                         required
                                         disabled={!formData.country}
-                                        className={`w-full px-4 py-3 bg-slate-50 border rounded-2xl focus:ring-2 focus:ring-slate-900 outline-none transition-all text-slate-900 font-bold text-sm cursor-pointer disabled:opacity-50 ${errors.city ? 'border-red-500 ring-2 ring-red-50' : 'border-slate-100'
+                                        className={`w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-slate-900 outline-none transition-all text-slate-900 font-bold text-sm cursor-pointer disabled:opacity-50 ${errors.city ? 'border-red-500 ring-2 ring-red-50' : ''
                                             }`}
                                         value={formData.city}
                                         onChange={(e) => setFormData({
@@ -300,7 +301,7 @@ const LocationPage = () => {
                                     <label className="block text-[11px] font-bold tracking-widest font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">Location Type</label>
                                     <select
                                         required
-                                        className={`w-full px-4 py-3 bg-slate-50 border rounded-2xl focus:ring-2 focus:ring-slate-900 outline-none transition-all text-slate-900 font-bold text-sm cursor-pointer ${errors.type ? 'border-red-500 ring-2 ring-red-50' : 'border-slate-100'
+                                        className={`w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-slate-900 outline-none transition-all text-slate-900 font-bold text-sm cursor-pointer ${errors.type ? 'border-red-500 ring-2 ring-red-50' : ''
                                             }`}
                                         value={formData.type}
                                         onChange={(e) => setFormData({
@@ -311,7 +312,7 @@ const LocationPage = () => {
                                         })}
                                     >
                                         <option value="AIRPORT">Airport (IATA)</option>
-                                        <option value="OTHER">Other (Manual)</option>
+                                        <option value="OTHER">Other</option>
                                     </select>
                                 </div>
 
@@ -322,7 +323,7 @@ const LocationPage = () => {
                                             <select
                                                 required
                                                 disabled={!formData.city || isDataLoading}
-                                                className={`w-full px-4 py-3 bg-slate-50 border rounded-2xl focus:ring-2 focus:ring-slate-900 outline-none transition-all text-slate-900 font-bold text-sm cursor-pointer disabled:opacity-50 ${errors.name ? 'border-red-500 ring-2 ring-red-50' : 'border-slate-100'
+                                                className={`w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-slate-900 outline-none transition-all text-slate-900 font-bold text-sm cursor-pointer disabled:opacity-50 ${errors.name ? 'border-red-500 ring-2 ring-red-50' : ''
                                                     }`}
                                                 value={formData.locationCode}
                                                 onChange={(e) => {
@@ -352,7 +353,7 @@ const LocationPage = () => {
                                             <input
                                                 type="text"
                                                 required
-                                                className={`w-full px-4 py-3 bg-slate-50 border rounded-2xl focus:ring-2 focus:ring-slate-900 outline-none transition-all text-slate-900 font-bold text-sm ${errors.name ? 'border-red-500 ring-2 ring-red-50' : 'border-slate-100'
+                                                className={`w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-slate-900 outline-none transition-all text-slate-900 font-bold text-sm ${errors.name ? 'border-red-500 ring-2 ring-red-50' : ''
                                                     }`}
                                                 placeholder="e.g. City Center Terminal"
                                                 value={formData.name}
@@ -365,7 +366,7 @@ const LocationPage = () => {
                                                 type="text"
                                                 required
                                                 maxLength={10}
-                                                className={`w-full px-4 py-3 bg-slate-50 border rounded-2xl focus:ring-2 focus:ring-slate-900 outline-none transition-all text-slate-900 font-bold text-sm ${errors.locationCode ? 'border-red-500 ring-2 ring-red-50' : 'border-slate-100'
+                                                className={`w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-slate-900 outline-none transition-all text-slate-900 font-bold text-sm ${errors.locationCode ? 'border-red-500 ring-2 ring-red-50' : ''
                                                     }`}
                                                 placeholder="e.g. CENTER"
                                                 value={formData.locationCode}
@@ -387,7 +388,7 @@ const LocationPage = () => {
                                         type="submit"
                                         className="flex-1 py-3.5 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 shadow-xl shadow-slate-200/50 shadow-slate-200 transition-all text-xs"
                                     >
-                                        {isEditing ? 'Save Changes' : 'Create Location'}
+                                        Save
                                     </button>
                                 </div>
                             </form>

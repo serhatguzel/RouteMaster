@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { MapPin, Truck, Plane, LogOut, Menu, ChevronLeft, Home } from 'lucide-react';
+import { Menu, ChevronLeft, Home } from 'lucide-react';
 import logo from '../assets/turkish-airlines-logo.png';
 import { ROLES, PATHS, STORAGE_KEYS } from '../utils/constants';
 
 const MENU_ITEMS = [
-    { path: PATHS.ROUTES, name: 'Route Search', icon: Plane, allowedRoles: [ROLES.ADMIN, ROLES.AGENCY] },
-    { path: PATHS.LOCATIONS, name: 'Locations', icon: MapPin, allowedRoles: [ROLES.ADMIN] },
-    { path: PATHS.TRANSPORTATIONS, name: 'Transportations', icon: Truck, allowedRoles: [ROLES.ADMIN] },
+    { path: PATHS.ROUTES, name: 'Route Search', allowedRoles: [ROLES.ADMIN, ROLES.AGENCY] },
+    { path: PATHS.LOCATIONS, name: 'Locations', allowedRoles: [ROLES.ADMIN] },
+    { path: PATHS.TRANSPORTATIONS, name: 'Transportations', allowedRoles: [ROLES.ADMIN] },
 ];
 
 const DashboardLayout = () => {
@@ -53,21 +53,19 @@ const DashboardLayout = () => {
                 {/* Sol Orta: Dinamik Menü Linkleri */}
                 <nav className="flex-1 py-6 px-3 space-y-2 overflow-y-auto custom-scrollbar">
                     {visibleMenuItems.map((item) => {
-                        const Icon = item.icon;
                         const isActive = location.pathname.startsWith(item.path);
-
                         return (
                             <Link
                                 key={item.path}
                                 to={item.path}
-                                className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all ${isActive
+                                className={`flex items-center px-4 py-3 rounded-xl transition-all ${isActive
                                     ? 'bg-slate-800 text-white shadow-md'
                                     : 'text-slate-400 hover:bg-white/5 hover:text-white'
                                     }`}
                                 title={!isSidebarOpen ? item.name : ""}
                             >
-                                <Icon size={20} className="shrink-0" />
-                                {isSidebarOpen && <span className="font-medium text-sm whitespace-nowrap">{item.name}</span>}
+                                {isSidebarOpen && <span className="font-semibold text-sm whitespace-nowrap uppercase tracking-wider">{item.name}</span>}
+                                {!isSidebarOpen && <span className="font-bold text-xs uppercase tracking-tighter">{item.name.charAt(0)}</span>}
                             </Link>
                         );
                     })}
@@ -77,11 +75,10 @@ const DashboardLayout = () => {
                 <div className="p-4 border-t border-white/10">
                     <button
                         onClick={handleLogout}
-                        className="flex items-center gap-3 w-full px-3 py-3 rounded-xl text-red-400 hover:bg-red-400/10 transition-colors"
+                        className="flex items-center justify-center w-full px-3 py-3 rounded-xl text-red-400 hover:bg-red-400/10 transition-colors font-bold text-xs uppercase tracking-widest"
                         title={!isSidebarOpen ? "Logout" : ""}
                     >
-                        <LogOut size={20} className="shrink-0" />
-                        {isSidebarOpen && <span className="font-medium text-sm">Logout</span>}
+                        {isSidebarOpen ? "Logout" : "L"}
                     </button>
                 </div>
             </aside>

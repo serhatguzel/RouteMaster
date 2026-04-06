@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
-import { Plane, Bus, Train, Plus, Trash2, Loader2, Search, Edit, MapPin, Calendar } from 'lucide-react';
+import { Plus, Trash2, Loader2, Search, Edit } from 'lucide-react';
 
 const TransportationPage = () => {
     const [loading, setLoading] = useState(true);
@@ -127,6 +127,7 @@ const TransportationPage = () => {
             setErrors({});
         } catch (err) {
             setError('Something went wrong. Please check your data.');
+            setTimeout(() => setError(''), 3000);
         }
     };
 
@@ -190,7 +191,7 @@ const TransportationPage = () => {
                             <input
                                 type="text"
                                 placeholder="Search routes..."
-                                className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 outline-none text-sm w-64 text-slate-900 transition-all shadow-xl shadow-slate-200/50"
+                                className="pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-slate-900 outline-none text-sm w-72 text-slate-900 transition-all shadow-sm"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -199,8 +200,7 @@ const TransportationPage = () => {
                             onClick={handleAdd}
                             className="flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-xl hover:bg-slate-800 transition-all font-bold text-sm shadow-lg shadow-slate-100 active:scale-95"
                         >
-                            <Plus size={18} />
-                            New Transportation
+                            Add
                         </button>
                     </div>
                 </div>
@@ -214,17 +214,19 @@ const TransportationPage = () => {
                                     <th className="px-6 py-4 text-[11px] font-bold tracking-widest font-bold text-slate-500 uppercase tracking-widest">Type</th>
                                     <th className="px-6 py-4 text-[11px] font-bold tracking-widest font-bold text-slate-500 uppercase tracking-widest">Route</th>
                                     <th className="px-6 py-4 text-[11px] font-bold tracking-widest font-bold text-slate-500 uppercase tracking-widest">Days</th>
-                                    <th className="px-6 py-4 text-[11px] font-bold tracking-widest font-bold text-slate-500 uppercase tracking-widest text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50">
                                 {filteredTransportations.map((t) => (
                                     <tr key={t.id} className="hover:bg-slate-50/30 transition-colors group">
                                         <td className="px-6 py-4">
-                                            <span className="flex items-center gap-2 font-bold text-slate-700 text-sm">
-                                                {t.transportationType === 'FLIGHT' ? <Plane className="w-4 h-4 text-blue-500" /> : <Bus className="w-4 h-4 text-emerald-500" />}
+                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-widest font-bold ${t.transportationType === 'FLIGHT'
+                                                ? 'bg-blue-100 text-blue-700'
+                                                : 'bg-green-100 text-green-700'
+                                                }`}>
                                                 {t.transportationType}
                                             </span>
+
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-4">
@@ -252,8 +254,20 @@ const TransportationPage = () => {
                                         </td>
                                         <td className="px-6 py-4 text-right">
                                             <div className="flex justify-end gap-2">
-                                                <button onClick={() => handleEdit(t)} className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-all"><Edit size={16} /></button>
-                                                <button onClick={() => handleDelete(t.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"><Trash2 size={16} /></button>
+                                                <button
+                                                    onClick={() => handleEdit(t)}
+                                                    className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100/50 rounded-xl transition-all duration-200"
+                                                    title="Edit"
+                                                >
+                                                    <Edit size={18} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(t.id)}
+                                                    className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200"
+                                                    title="Delete"
+                                                >
+                                                    <Trash2 size={18} />
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -282,7 +296,7 @@ const TransportationPage = () => {
                                             <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">Origin</label>
                                             <select
                                                 required
-                                                className={`w-full px-4 py-3 bg-slate-50 border rounded-3xl focus:ring-2 focus:ring-slate-900 outline-none font-bold text-sm text-slate-900 transition-all ${errors.origin || errors.route ? 'border-red-500 ring-2 ring-red-50' : 'border-slate-100'
+                                                className={`w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-slate-900 outline-none transition-all text-slate-900 font-bold text-sm cursor-pointer ${errors.origin || errors.route ? 'border-red-500 ring-2 ring-red-50' : ''
                                                     }`}
                                                 value={formData.origin.id}
                                                 onChange={(e) => setFormData({ ...formData, origin: { id: e.target.value } })}
@@ -297,7 +311,7 @@ const TransportationPage = () => {
                                             <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">Destination</label>
                                             <select
                                                 required
-                                                className={`w-full px-4 py-3 bg-slate-50 border rounded-3xl focus:ring-2 focus:ring-slate-900 outline-none font-bold text-sm text-slate-900 transition-all ${errors.destination || errors.route ? 'border-red-500 ring-2 ring-red-50' : 'border-slate-100'
+                                                className={`w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-slate-900 outline-none transition-all text-slate-900 font-bold text-sm cursor-pointer ${errors.destination || errors.route ? 'border-red-500 ring-2 ring-red-50' : ''
                                                     }`}
                                                 value={formData.destination.id}
                                                 onChange={(e) => setFormData({ ...formData, destination: { id: e.target.value } })}
@@ -357,7 +371,7 @@ const TransportationPage = () => {
                                             type="submit"
                                             className="flex-1 py-3 bg-slate-900 text-white rounded-3xl font-bold hover:bg-slate-800 transition-all text-[11px] font-bold tracking-widest shadow-xl shadow-slate-200"
                                         >
-                                            {isEditing ? 'Save Changes' : 'Create Sefer'}
+                                            Save
                                         </button>
                                     </div>
                                 </form>
