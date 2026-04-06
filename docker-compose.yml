@@ -6,8 +6,10 @@ services:
     ports:
       - "8080:8080" # Application
       - "5005:5005" # DEBUG
+    volumes:
+      - ./logs:/app/logs
     environment:
       - SPRING_PROFILES_ACTIVE=default
-      # Java'ya "Debug modunda başla"
+      # Start in DEBUG MODE
       - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
     restart: unless-stopped

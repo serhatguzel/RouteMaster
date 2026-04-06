@@ -4,6 +4,7 @@ import com.routemaster.RouteMaster.dto.AuthRequestDto;
 import com.routemaster.RouteMaster.dto.AuthResponseDto;
 import com.routemaster.RouteMaster.security.JwtUtil;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
+@Slf4j
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -33,6 +35,8 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDto> login(@Valid @RequestBody AuthRequestDto request) {
 
+        log.info("Login Trial -> User: {}", request.getUsername());
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
@@ -44,6 +48,8 @@ public class AuthController {
                 .findFirst()
                 .map(auth -> auth.getAuthority())
                 .orElse("USER");
+
+        log.info("Login is successful: User: {} is in the system", request.getUsername());
 
         return ResponseEntity.ok(new AuthResponseDto(jwt, role));
     }
