@@ -8,8 +8,22 @@ services:
       - "5005:5005" # DEBUG
     volumes:
       - ./logs:/app/logs
+    depends_on:
+      - redis
     environment:
       - SPRING_PROFILES_ACTIVE=default
       # Start in DEBUG MODE
       - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
     restart: unless-stopped
+  redis:
+    image: redis:7.2-alpine
+    container_name: routemaster_redis
+    command: [ "redis-server", "--appendonly", "yes" ] # AOF
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data # Verilerin kalıcı olması için volume
+    restart: unless-stopped
+
+volumes:
+    redis_data:

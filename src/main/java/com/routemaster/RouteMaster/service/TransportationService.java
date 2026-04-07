@@ -9,6 +9,9 @@ import com.routemaster.RouteMaster.repository.TransportationRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,7 +24,8 @@ public class TransportationService {
     private final LocationRepository locationRepository;
     private final TransportationMapper transportationMapper;
 
-    public TransportationService(TransportationRepository transportationRepository, LocationRepository locationRepository, TransportationMapper transportationMapper) {
+    public TransportationService(TransportationRepository transportationRepository,
+            LocationRepository locationRepository, TransportationMapper transportationMapper) {
         this.transportationRepository = transportationRepository;
         this.locationRepository = locationRepository;
         this.transportationMapper = transportationMapper;
@@ -31,20 +35,22 @@ public class TransportationService {
         log.info("Getting Transportation -> Id: {}", id);
         Transportation entity = transportationRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Transportation not found with id: " + id));
-        log.info("Transportation got retrieved Id: {}" , id );
+        log.info("Transportation got retrieved Id: {}", id);
         return transportationMapper.toDto(entity);
     }
 
+    @Cacheable(value = "transportations", key = "'all'")
     public List<TransportationDto> getAllTransportations() {
         log.info("Getting All Transportations");
-        List<TransportationDto> transportationList =  transportationRepository.findAll().stream()
+        List<TransportationDto> transportationList = transportationRepository.findAllByOrderByOriginNameAsc().stream()
                 .map(transportationMapper::toDto)
                 .toList();
-        log.info("All Transportations got retrieved (Total: {})" , transportationList.size() );
+        log.info("All Transportations got retrieved (Total: {})", transportationList.size());
         return transportationList;
     }
 
     @Transactional
+    @CacheEvict(value = { "transportations", "routes" }, allEntries = true)
     public TransportationDto createTransportation(TransportationDto transportationDto) {
         log.info("Adding New Transportation: {}", transportationDto);
         Location origin = locationRepository.findById(transportationDto.getOrigin().getId())
@@ -57,7 +63,7 @@ public class TransportationService {
         transportation.setOrigin(origin);
         transportation.setDestination(destination);
 
-        if(!transportation.isValidRoute()){
+        if (!transportation.isValidRoute()) {
             log.error("Origin and Destination locations cannot be the same.");
             throw new RuntimeException("Origin and Destination locations cannot be the same.");
         }
@@ -70,6 +76,7 @@ public class TransportationService {
     }
 
     @Transactional
+    @CacheEvict(value = { "transportations", "routes" }, allEntries = true)
     public TransportationDto updateTransportation(Long id, TransportationDto transportationDto) {
         log.info("Updating Transportation -> Id: {}", id);
         Transportation entity = transportationRepository.findById(id)
@@ -83,6 +90,7 @@ public class TransportationService {
     }
 
     @Transactional
+    @CacheEvict(value = { "transportations", "routes" }, allEntries = true)
     public void deleteTransportation(Long id) {
         log.warn("Deleting Transportation -> Id: {}", id);
 

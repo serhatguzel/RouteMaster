@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.format.TextStyle;
 import java.util.HashSet;
 import java.util.List;
@@ -18,7 +19,8 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TransportationDto {
+@ToString
+public class TransportationDto implements Serializable {
 
     private Long id;
 

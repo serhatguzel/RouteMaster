@@ -9,12 +9,15 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class LocationDto {
+@ToString
+public class LocationDto implements Serializable {
 
     private Long id;
 

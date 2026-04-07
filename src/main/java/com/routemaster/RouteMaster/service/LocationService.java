@@ -10,6 +10,9 @@ import com.routemaster.RouteMaster.repository.TransportationRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,7 +25,8 @@ public class LocationService {
 
     private final LocationMapper locationMapper;
 
-    public LocationService(LocationRepository locationRepository, TransportationRepository transportationRepository, LocationMapper locationMapper) {
+    public LocationService(LocationRepository locationRepository, TransportationRepository transportationRepository,
+            LocationMapper locationMapper) {
         this.locationRepository = locationRepository;
         this.transportationRepository = transportationRepository;
         this.locationMapper = locationMapper;
@@ -39,17 +43,19 @@ public class LocationService {
         return locationMapper.toDto(entity);
     }
 
+    @Cacheable(value = "locations", key = "'all'")
     public List<LocationDto> getAllLocations() {
         log.info("Getting All Locations");
 
-        List<LocationDto> locationList = locationRepository.findAll().stream()
+        List<LocationDto> locationList = locationRepository.findAllByOrderByNameAsc().stream()
                 .map(locationMapper::toDto)
                 .toList();
         log.info("All locations got (Total: {})", locationList.size());
-        return  locationList;
+        return locationList;
     }
 
     @Transactional
+    @CacheEvict(value = "locations", allEntries = true)
     public LocationDto createLocation(LocationDto locationDto) {
         log.info("Adding New Location: {}", locationDto);
         if (locationRepository.existsByLocationCode(locationDto.getLocationCode())) {
@@ -65,6 +71,7 @@ public class LocationService {
     }
 
     @Transactional
+    @CacheEvict(value = { "locations", "routes" }, allEntries = true)
     public LocationDto updateLocation(Long id, LocationDto locationDto) {
         log.info("Updating Location -> Id: {}", id);
         Location entity = locationRepository.findById(id)
@@ -78,6 +85,7 @@ public class LocationService {
     }
 
     @Transactional
+    @CacheEvict(value = "locations", allEntries = true)
     public void deleteLocation(Long id) {
         log.warn("Deleting Location -> Id: {}", id);
         if (!locationRepository.existsById(id)) {
