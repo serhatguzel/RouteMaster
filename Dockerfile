@@ -1,4 +1,4 @@
-# 1. Stage
+# 1. Stage Builder
 FROM maven:3.9.6-eclipse-temurin-21-alpine AS builder
 WORKDIR /app
 
@@ -7,7 +7,7 @@ RUN mvn dependency:go-offline
 
 COPY src ./src
 RUN mvn clean package -DskipTests
-# 2. Stage
+# 2. Stage Runner
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
