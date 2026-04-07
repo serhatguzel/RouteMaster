@@ -1,13 +1,12 @@
 package com.routemaster.RouteMaster.controller;
 
+import com.routemaster.RouteMaster.dto.RouteSearchRequestDto;
 import com.routemaster.RouteMaster.dto.RouteSearchResponseDto;
 import com.routemaster.RouteMaster.service.RouteSearchService;
 import jakarta.validation.Valid;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -21,10 +20,8 @@ public class RouteSearchController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<RouteSearchResponseDto>> searchRoute(@Valid @RequestParam Long originId,
-                                                                    @RequestParam Long destinationId,
-                                                                    @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date) {
-        List<RouteSearchResponseDto> routes = routeSearchService.searchRoutes(originId, destinationId, date);
+    public ResponseEntity<List<RouteSearchResponseDto>> searchRoute(@Valid RouteSearchRequestDto request) {
+        List<RouteSearchResponseDto> routes = routeSearchService.searchRoutes(request);
         return ResponseEntity.ok(routes);
     }
 }

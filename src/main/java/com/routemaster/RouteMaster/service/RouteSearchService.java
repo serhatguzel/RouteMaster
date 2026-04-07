@@ -1,5 +1,6 @@
 package com.routemaster.RouteMaster.service;
 
+import com.routemaster.RouteMaster.dto.RouteSearchRequestDto;
 import com.routemaster.RouteMaster.dto.RouteSearchResponseDto;
 import com.routemaster.RouteMaster.entity.Transportation;
 import com.routemaster.RouteMaster.enums.TransportationType;
@@ -24,12 +25,17 @@ public class RouteSearchService {
     private final TransportationRepository transportationRepository;
     private final TransportationMapper transportationMapper;
 
-    @Cacheable(value = "routes", key = "#originId + '-' + #destinationId + '-' + #date")
-    public List<RouteSearchResponseDto> searchRoutes(Long originId, Long destinationId, LocalDate date) {
+    @Cacheable(value = "routes", key = "#request.originId + '-' + #request.destinationId + '-' + #request.date")
+    public List<RouteSearchResponseDto> searchRoutes(RouteSearchRequestDto request) {
 
-        log.info("Started Route Search: Origin Id: {}, Destination Id: {}, Date: {}", originId, destinationId, date);
+        if (request.getOriginId().equals(request.getDestinationId())) {
+            throw new RuntimeException("Origin and Destination cannot be the same.");
+        }
 
-        int dayOfWeek = date.getDayOfWeek().getValue();
+        log.info("Started Route Search: Origin Id: {}, Destination Id: {}, Date: {}", 
+                request.getOriginId(), request.getDestinationId(), request.getDate());
+
+        int dayOfWeek = request.getDate().getDayOfWeek().getValue();
 
         List<Transportation> allDailyRoutes = transportationRepository.findByOperationDaysContaining(dayOfWeek);
 
@@ -39,7 +45,7 @@ public class RouteSearchService {
         List<RouteSearchResponseDto> validRoutes = new ArrayList<>();
         List<Transportation> currentPath = new ArrayList<>();
 
-        findPathsDFS(originId, destinationId, routeGraph, currentPath, validRoutes);
+        findPathsDFS(request.getOriginId(), request.getDestinationId(), routeGraph, currentPath, validRoutes);
 
         log.info("Searching Completed: Result of routes is {}", validRoutes.size());
 

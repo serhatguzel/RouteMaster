@@ -40,7 +40,6 @@ public class TransportationServiceTest {
     @InjectMocks
     TransportationService transportationService;
 
-    /** TODO */
     @Spy
     private TransportationMapper transportationMapper = Mappers.getMapper(TransportationMapper.class);
 
@@ -56,6 +55,7 @@ public class TransportationServiceTest {
     void setUp() {
 
         originLocationDto = LocationDto.builder()
+                .id(10L)
                 .name("Istanbul Airport")
                 .country("Turkey")
                 .city("Istanbul")
@@ -63,6 +63,7 @@ public class TransportationServiceTest {
                 .build();
 
         destinationLocationDto = LocationDto.builder()
+                .id(20L)
                 .name("London Airport")
                 .country("England")
                 .city("London")
@@ -70,6 +71,7 @@ public class TransportationServiceTest {
                 .build();
 
         originLocation= Location.builder()
+                .id(10L)
                 .name("Istanbul Airport")
                 .country("Turkey")
                 .city("Istanbul")
@@ -77,6 +79,7 @@ public class TransportationServiceTest {
                 .build();
 
         destinationLocation = Location.builder()
+                .id(20L)
                 .name("London Airport")
                 .country("England")
                 .city("London")
@@ -130,7 +133,7 @@ public class TransportationServiceTest {
     @DisplayName("Tüm ulasim listesi dogru boyutta cekilebilmeli")
     void shouldGetAllTransportations() {
         // Given
-        when(transportationRepository.findAll()).thenReturn(List.of(transportation, transportation));
+        when(transportationRepository.findAllByOrderByOriginNameAsc()).thenReturn(List.of(transportation, transportation));
 
         // When
         List<TransportationDto> resultList = transportationService.getAllTransportations();
@@ -138,7 +141,7 @@ public class TransportationServiceTest {
         // Then
         assertNotNull(resultList);
         assertEquals(2, resultList.size());
-        verify(transportationRepository, times(1)).findAll();
+        verify(transportationRepository, times(1)).findAllByOrderByOriginNameAsc();
 
     }
 
@@ -162,7 +165,8 @@ public class TransportationServiceTest {
     }
 
     @Test
-    @DisplayName("Kalkis noktasi (Origin) veritabaninda yoksa kayit olusturma iptal edilip hata verilmeli")
+    @DisplayName("If the origin point does not exist in the database, the record creation process should be " +
+            "canceled and an error should be reported.")
     void shouldThrowExceptionWhenOriginNotFound() {
         // GIVEN
         when(locationRepository.findById(originLocationDto.getId())).thenReturn(Optional.empty());
@@ -178,7 +182,7 @@ public class TransportationServiceTest {
     }
 
     @Test
-    @DisplayName("Kalkis ve Varis ayni lokasyon olursa hata vermeli")
+    @DisplayName("Origin ve Destination is same location")
     void shouldFailWhenOriginAndDestinationAreSame() {
         // GIVEN
         when(locationRepository.findById(anyLong())).thenReturn(Optional.of(originLocation));
@@ -224,7 +228,7 @@ public class TransportationServiceTest {
     }
 
     @Test
-    @DisplayName("Olmayan bir kayit guncellenmeye calisilirsa EntityNotFoundException firlatmali")
+    @DisplayName("An error should be thrown when trying to update an ID that doesn't exist.")
     void shouldThrowExceptionWhenTransportationNotFoundForUpdate() {
         // GIVEN
         when(transportationRepository.findById(any())).thenReturn(Optional.empty());

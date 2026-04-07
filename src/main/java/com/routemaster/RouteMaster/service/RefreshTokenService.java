@@ -25,7 +25,7 @@ public class RefreshTokenService {
         // Save(Key: token, Value: userId)
         redisTemplate.opsForValue().set(redisKey, String.valueOf(userId), REFRESH_TOKEN_EXPIRATION, TimeUnit.MILLISECONDS);
 
-        log.info("💾 Refresh Token was created to Redis. UserID: {}", userId);
+        log.info("Refresh Token was created to Redis. UserID: {}", userId);
         return refreshToken;
     }
 
@@ -37,6 +37,6 @@ public class RefreshTokenService {
     public void deleteRefreshToken(String token) {
         String redisKey = "refreshToken:" + token;
         redisTemplate.delete(redisKey);
-        log.warn("🗑️ Refresh Token was deleted.");
+        log.warn("Refresh Token was deleted.");
     }
 }

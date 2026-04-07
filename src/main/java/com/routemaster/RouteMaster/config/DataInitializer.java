@@ -98,7 +98,7 @@ public class DataInitializer implements CommandLineRunner {
             saveTransportation(ist, center, TransportationType.UBER, Set.of(1, 2, 3, 4, 5, 6, 7));
         }
 
-        System.out.println("🚀 ROUTEMASTER: BAŞLANGIÇ VERİLERİ (ROLES, USERS, LOCATIONS & TRANSPORTATIONS) YÜKLENDİ!");
+        System.out.println("ROUTEMASTER: BAŞLANGIÇ VERİLERİ (ROLES, USERS, LOCATIONS & TRANSPORTATIONS) YÜKLENDİ!");
     }
 
     private Location createLocation(String name, String city, String country, String code, LocationType type) {

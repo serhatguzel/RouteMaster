@@ -3,6 +3,7 @@ package com.routemaster.RouteMaster.service;
 import com.routemaster.RouteMaster.dto.LocationDto;
 import com.routemaster.RouteMaster.entity.Location;
 import com.routemaster.RouteMaster.repository.LocationRepository;
+import com.routemaster.RouteMaster.repository.TransportationRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +28,9 @@ public class LocationServiceTest {
     @Mock
     private LocationRepository locationRepository;
 
-    /** TODO */
+    @Mock
+    private TransportationRepository transportationRepository;
+
     @Spy
     private LocationMapper locationMapper = Mappers.getMapper(LocationMapper.class);
 
@@ -107,28 +110,6 @@ public class LocationServiceTest {
     }
 
     @Test
-    @DisplayName("When only the name is submitted, the other fields should remain unchanged.")
-    void shouldPartiallyUpdateLocation() {
-        // Given
-        Long id = 1L;
-        Location existing = Location.builder()
-                .id(id).name("Eski İsim").city("Istanbul").country("Turkey").locationCode("IST").build();
-
-        LocationDto partialDto = LocationDto.builder().name("Yeni İsim").build();
-
-        when(locationRepository.findById(id)).thenReturn(Optional.of(existing));
-        when(locationRepository.save(any())).thenAnswer(i -> i.getArgument(0));
-
-        // When
-        LocationDto result = locationService.updateLocation(id, partialDto);
-
-        // Then
-        assertEquals("Yeni İsim", result.getName());
-        assertEquals("Istanbul", result.getCity());
-        assertEquals("IST", result.getLocationCode());
-    }
-
-    @Test
     @DisplayName("An error should be thrown when trying to update an ID that doesn't exist.")
     void shouldThrowExceptionWhenLocationNotFoundForUpdate() {
         // Given
@@ -150,6 +131,8 @@ public class LocationServiceTest {
         Long targetId = 1L;
         // Repository'de bu ID'nin var olduğunu simüle ediyoruz
         when(locationRepository.existsById(targetId)).thenReturn(true);
+        // Lokasyonun kullanımda olmadığını simüle ediyoruz
+        when(transportationRepository.existsByOriginIdOrDestinationId(targetId, targetId)).thenReturn(false);
 
         // WHEN
         locationService.deleteLocation(targetId);

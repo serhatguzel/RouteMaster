@@ -46,7 +46,12 @@ const RouteSearchPage = () => {
 
         if (!searchCriteria.originId || !searchCriteria.destinationId) {
             setError('Please select both origin and destination.');
+            return;
+        }
 
+        if (searchCriteria.originId === searchCriteria.destinationId) {
+            setError('Origin and destination cannot be the same.');
+            return;
         }
 
         try {
@@ -62,12 +67,13 @@ const RouteSearchPage = () => {
             });
 
             setResults(res.data);
-
             if (res.data.length === 0) {
                 setError('No routes found for the selected criteria.');
             }
         } catch (err) {
-            setError('Route search failed.');
+            // 3. Backend'den gelen spesifik hata mesajını göster (Yeni!)
+            const serverMessage = err.response?.data?.message || 'Route search failed.';
+            setError(serverMessage);
         } finally {
             setSearching(false);
         }
