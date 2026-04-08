@@ -2,14 +2,8 @@ import React, { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, ChevronLeft } from 'lucide-react';
 import logo from '../assets/turkish-airlines-logo.png';
-import { ROLES, PATHS, STORAGE_KEYS } from '../utils/constants';
+import { ROLES, PATHS, STORAGE_KEYS, MENU_ITEMS } from '../utils/constants';
 import { logout } from '../services/api';
-
-const MENU_ITEMS = [
-    { path: PATHS.ROUTES, name: 'Route Search', allowedRoles: [ROLES.ADMIN, ROLES.AGENCY] },
-    { path: PATHS.LOCATIONS, name: 'Locations', allowedRoles: [ROLES.ADMIN] },
-    { path: PATHS.TRANSPORTATIONS, name: 'Transportations', allowedRoles: [ROLES.ADMIN] },
-];
 
 const DashboardLayout = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);

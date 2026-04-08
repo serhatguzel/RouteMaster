@@ -3,6 +3,7 @@ import api from '../services/api';
 import {
     Plane, Bus, ArrowRight, Info, Navigation, Train, Car, MapPin, ChevronRight
 } from 'lucide-react';
+import { TRANSPORTATION_TYPES, API_ENDPOINTS } from '../utils/constants';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -20,13 +21,13 @@ const RouteSearchPage = () => {
     const [selectedRoute, setSelectedRoute] = useState(null);
     
     const typeConfig = {
-        FLIGHT: { Icon: Plane, color: 'bg-indigo-600', textColor: 'text-indigo-600', light: 'bg-indigo-50', label: 'Flight' },
-        BUS: { Icon: Bus, color: 'bg-amber-500', textColor: 'text-amber-600', light: 'bg-amber-50', label: 'Bus' },
-        SUBWAY: { Icon: Train, color: 'bg-emerald-500', textColor: 'text-emerald-600', light: 'bg-emerald-50', label: 'Subway' },
-        UBER: { Icon: Car, color: 'bg-slate-800', textColor: 'text-slate-600', light: 'bg-slate-100', label: 'Uber' }
+        [TRANSPORTATION_TYPES.FLIGHT]: { Icon: Plane, color: 'bg-indigo-600', textColor: 'text-indigo-600', light: 'bg-indigo-50', label: 'Flight' },
+        [TRANSPORTATION_TYPES.BUS]: { Icon: Bus, color: 'bg-amber-500', textColor: 'text-amber-600', light: 'bg-amber-50', label: 'Bus' },
+        [TRANSPORTATION_TYPES.SUBWAY]: { Icon: Train, color: 'bg-emerald-500', textColor: 'text-emerald-600', light: 'bg-emerald-50', label: 'Subway' },
+        [TRANSPORTATION_TYPES.UBER]: { Icon: Car, color: 'bg-slate-800', textColor: 'text-slate-600', light: 'bg-slate-100', label: 'Uber' }
     };
 
-    const getSegmentConfig = (type) => typeConfig[type] || typeConfig.BUS;
+    const getSegmentConfig = (type) => typeConfig[type] || typeConfig[TRANSPORTATION_TYPES.BUS];
 
     const [searchCriteria, setSearchCriteria] = useState({
         originId: '',
@@ -41,7 +42,7 @@ const RouteSearchPage = () => {
     const fetchLocations = async () => {
         try {
             setLoading(true);
-            const res = await api.get('/locations');
+            const res = await api.get(API_ENDPOINTS.LOCATIONS.BASE);
             setLocations(res.data);
         } catch (err) {
             setError('Locations could not be loaded.');
@@ -67,7 +68,7 @@ const RouteSearchPage = () => {
             setSearching(true);
             setError('');
 
-            const res = await api.get('/routes/search', {
+            const res = await api.get(API_ENDPOINTS.ROUTES.SEARCH, {
                 params: {
                     originId: searchCriteria.originId,
                     destinationId: searchCriteria.destinationId,
@@ -99,7 +100,7 @@ const RouteSearchPage = () => {
             nodes.push({ type: 'location', data: route.beforeFlight.destination }); 
         }
         
-        nodes.push({ type: 'transport', transportType: 'FLIGHT' });
+        nodes.push({ type: 'transport', transportType: TRANSPORTATION_TYPES.FLIGHT });
         nodes.push({ type: 'location', data: route.flight.destination }); 
         
         if (route.afterFlight) {

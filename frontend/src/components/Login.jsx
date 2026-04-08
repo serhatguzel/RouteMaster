@@ -4,7 +4,7 @@ import { Lock, User, Eye, EyeOff, Loader2 } from 'lucide-react';
 import axios from 'axios';
 import loginPhoto from '../assets/login-screen.png';
 import logo from '../assets/turkish-airlines-logo.png';
-import { PATHS, STORAGE_KEYS } from '../utils/constants';
+import { PATHS, STORAGE_KEYS, API_ENDPOINTS } from '../utils/constants';
 import { getErrorMessage } from '../utils/errorUtils';
 
 const Login = () => {
@@ -38,7 +38,7 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post('/api/auth/login', { username, password });
+      const response = await axios.post(API_ENDPOINTS.AUTH.LOGIN, { username, password });
       if (response.data.accessToken) {
         localStorage.setItem(STORAGE_KEYS.TOKEN, response.data.accessToken);
         localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, response.data.refreshToken);

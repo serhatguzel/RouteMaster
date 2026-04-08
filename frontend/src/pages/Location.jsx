@@ -3,6 +3,7 @@ import api from '../services/api';
 import { MapPin, Trash2, Loader2, Search, Edit } from 'lucide-react';
 import { fetchAirports, getHierarchicalData, getAirportsByCity } from '../services/airportService';
 import { getErrorMessage } from '../utils/errorUtils';
+import { LOCATION_TYPES, API_ENDPOINTS } from '../utils/constants';
 
 const LocationPage = () => {
 
@@ -23,7 +24,7 @@ const LocationPage = () => {
         locationCode: '',
         city: '',
         country: '',
-        type: 'AIRPORT'
+        type: LOCATION_TYPES.AIRPORT
     });
 
     useEffect(() => {
@@ -48,7 +49,7 @@ const LocationPage = () => {
     const getLocations = async () => {
         try {
             setLoading(true);
-            const response = await api.get('/locations');
+            const response = await api.get(API_ENDPOINTS.LOCATIONS.BASE);
             setLocations(response.data);
         } catch (err) {
             setError(getErrorMessage(err));
@@ -63,7 +64,7 @@ const LocationPage = () => {
             locationCode: '',
             city: '',
             country: '',
-            type: 'AIRPORT'
+            type: LOCATION_TYPES.AIRPORT
         });
         setIsEditing(false);
         setIsModalOpen(true);
@@ -76,7 +77,7 @@ const LocationPage = () => {
             locationCode: location.locationCode || '',
             city: location.city || '',
             country: location.country || '',
-            type: location.type || 'AIRPORT'
+            type: location.type || LOCATION_TYPES.AIRPORT
         });
         setIsEditing(true);
         setCurrentLocationId(location.id);
@@ -100,17 +101,17 @@ const LocationPage = () => {
         e.preventDefault();
 
         if (!validate()) {
-            setError('Lütfen tüm zorunlu alanları doldurun.');
+            setError('Please fill in all required fields.');
             setTimeout(() => setError(''), 3000);
             return;
         }
 
         try {
             if (isEditing) {
-                const response = await api.put(`/locations/${currentLocationId}`, formData);
+                const response = await api.put(`${API_ENDPOINTS.LOCATIONS.BASE}/${currentLocationId}`, formData);
                 setLocations(locations.map(loc => loc.id === currentLocationId ? response.data : loc));
             } else {
-                const response = await api.post('/locations', formData);
+                const response = await api.post(API_ENDPOINTS.LOCATIONS.BASE, formData);
                 setLocations([...locations, response.data]);
             }
             setIsModalOpen(false);
@@ -127,7 +128,7 @@ const LocationPage = () => {
 
     const confirmDelete = async () => {
         try {
-            await api.delete(`/locations/${deleteModal.id}`);
+            await api.delete(`${API_ENDPOINTS.LOCATIONS.BASE}/${deleteModal.id}`);
             setLocations(locations.filter(loc => loc.id !== deleteModal.id));
             setDeleteModal({ show: false, id: null });
         } catch (err) {
@@ -196,11 +197,11 @@ const LocationPage = () => {
                                     return (
                                         <tr key={loc.id} className="hover:bg-slate-50/30 transition-colors group">
                                             <td className="px-6 py-4">
-                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-widest font-bold ${loc.type === 'AIRPORT'
+                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-widest font-bold ${loc.type === LOCATION_TYPES.AIRPORT
                                                     ? 'bg-blue-100 text-blue-700'
                                                     : 'bg-slate-100 text-slate-700'
                                                     }`}>
-                                                    {loc.type || 'AIRPORT'}
+                                                    {loc.type || LOCATION_TYPES.AIRPORT}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 font-mono font-bold text-slate-400 text-xs uppercase tracking-tighter">
@@ -317,12 +318,12 @@ const LocationPage = () => {
                                             locationCode: ''
                                         })}
                                     >
-                                        <option value="AIRPORT">Airport (IATA)</option>
-                                        <option value="OTHER">Other</option>
+                                        <option value={LOCATION_TYPES.AIRPORT}>Airport (IATA)</option>
+                                        <option value={LOCATION_TYPES.OTHER}>Other</option>
                                     </select>
                                 </div>
 
-                                {formData.type === 'AIRPORT' ? (
+                                {formData.type === LOCATION_TYPES.AIRPORT ? (
                                     <>
                                         <div>
                                             <label className="block text-[11px] font-bold tracking-widest font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">Airport</label>
@@ -349,7 +350,7 @@ const LocationPage = () => {
                                                         {airport.name} ({airport.iata})
                                                     </option>
                                                 ))}
-                                                {formData.locationCode && formData.type === 'AIRPORT' && !allAirports.find(a => a.iata === formData.locationCode) && (
+                                                {formData.locationCode && formData.type === LOCATION_TYPES.AIRPORT && !allAirports.find(a => a.iata === formData.locationCode) && (
                                                     <option value={formData.locationCode}>
                                                         {formData.name} ({formData.locationCode})
                                                     </option>

@@ -16,3 +16,42 @@ export const STORAGE_KEYS = {
     ROLE: 'role',
     REFRESH_TOKEN: 'REFRESH_TOKEN'
 };
+
+export const LOCATION_TYPES = {
+    AIRPORT: 'AIRPORT',
+    OTHER: 'OTHER'
+};
+
+export const TRANSPORTATION_TYPES = {
+    FLIGHT: 'FLIGHT',
+    BUS: 'BUS',
+    SUBWAY: 'SUBWAY',
+    UBER: 'UBER'
+};
+
+export const EXTERNAL_URLS = {
+    AIRPORTS_DATA: 'https://raw.githubusercontent.com/algolia/datasets/master/airports/airports.json'
+};
+
+export const API_ENDPOINTS = {
+    AUTH: {
+        LOGIN: '/api/auth/login',
+        LOGOUT: '/api/auth/logout',
+        REFRESH: '/api/auth/refresh'
+    },
+    LOCATIONS: {
+        BASE: '/locations'
+    },
+    TRANSPORTATIONS: {
+        BASE: '/transportations'
+    },
+    ROUTES: {
+        SEARCH: '/routes/search'
+    }
+};
+
+export const MENU_ITEMS = [
+    { path: PATHS.ROUTES, name: 'Route Search', allowedRoles: [ROLES.ADMIN, ROLES.AGENCY] },
+    { path: PATHS.LOCATIONS, name: 'Locations', allowedRoles: [ROLES.ADMIN] },
+    { path: PATHS.TRANSPORTATIONS, name: 'Transportations', allowedRoles: [ROLES.ADMIN] },
+];

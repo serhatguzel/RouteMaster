@@ -1,4 +1,5 @@
-const AIRPORTS_DATA_URL = 'https://raw.githubusercontent.com/algolia/datasets/master/airports/airports.json';
+import { EXTERNAL_URLS } from '../utils/constants';
+
 
 let cachedAirports = null;
 
@@ -6,7 +7,7 @@ export const fetchAirports = async () => {
     if (cachedAirports) return cachedAirports;
 
     try {
-        const response = await fetch(AIRPORTS_DATA_URL);
+        const response = await fetch(EXTERNAL_URLS.AIRPORTS_DATA);
         const data = await response.json();
         
         // Algolia dataset structure: { iata_code: "IST", name: "...", city: "...", country: "...", ... }

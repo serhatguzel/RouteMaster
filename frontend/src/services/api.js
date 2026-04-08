@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { STORAGE_KEYS, PATHS } from '../utils/constants';
+import { STORAGE_KEYS, PATHS, API_ENDPOINTS } from '../utils/constants';
 
 const api = axios.create({
   baseURL: '/api/v1',
@@ -36,7 +36,7 @@ api.interceptors.response.use(
           throw new Error('No refresh token available');
         }
 
-        const res = await axios.post('/api/auth/refresh', refreshToken, {
+        const res = await axios.post(API_ENDPOINTS.AUTH.REFRESH, refreshToken, {
           headers: { 'Content-Type': 'text/plain' },
         });
 
@@ -68,7 +68,7 @@ export const logout = async () => {
   const refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
   try {
     if (refreshToken) {
-      await axios.post('/api/auth/logout', null, {
+      await axios.post(API_ENDPOINTS.AUTH.LOGOUT, null, {
         headers: { 'X-Refresh-Token': refreshToken },
       });
     }

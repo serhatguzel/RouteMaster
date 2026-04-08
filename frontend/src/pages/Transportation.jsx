@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { Plus, Trash2, Loader2, Search, Edit } from 'lucide-react';
 import { getErrorMessage } from '../utils/errorUtils';
+import { TRANSPORTATION_TYPES, API_ENDPOINTS } from '../utils/constants';
 
 const TransportationPage = () => {
     const [loading, setLoading] = useState(true);
@@ -19,7 +20,7 @@ const TransportationPage = () => {
     const [formData, setFormData] = useState({
         origin: { id: '' },
         destination: { id: '' },
-        transportationType: 'FLIGHT',
+        transportationType: TRANSPORTATION_TYPES.FLIGHT,
         operationDays: []
     });
 
@@ -31,8 +32,8 @@ const TransportationPage = () => {
         try {
             setLoading(true);
             const [transRes, locRes] = await Promise.all([
-                api.get('/transportations'),
-                api.get('/locations')
+                api.get(API_ENDPOINTS.TRANSPORTATIONS.BASE),
+                api.get(API_ENDPOINTS.LOCATIONS.BASE)
             ]);
             setTransportations(transRes.data);
             setLocations(locRes.data);
@@ -86,7 +87,7 @@ const TransportationPage = () => {
         setFormData({
             origin: { id: '' },
             destination: { id: '' },
-            transportationType: 'FLIGHT',
+            transportationType: TRANSPORTATION_TYPES.FLIGHT,
             operationDays: []
         });
         setIsEditing(false);
@@ -116,10 +117,10 @@ const TransportationPage = () => {
 
         try {
             if (isEditing) {
-                const res = await api.put(`/transportations/${currentId}`, formData);
+                const res = await api.put(`${API_ENDPOINTS.TRANSPORTATIONS.BASE}/${currentId}`, formData);
                 setTransportations(transportations.map(t => t.id === currentId ? res.data : t));
             } else {
-                const res = await api.post('/transportations', formData);
+                const res = await api.post(API_ENDPOINTS.TRANSPORTATIONS.BASE, formData);
                 setTransportations([...transportations, res.data]);
             }
             setIsModalOpen(false);
@@ -137,7 +138,7 @@ const TransportationPage = () => {
 
     const confirmDelete = async () => {
         try {
-            await api.delete(`/transportations/${itemToDelete}`);
+            await api.delete(`${API_ENDPOINTS.TRANSPORTATIONS.BASE}/${itemToDelete}`);
             setTransportations(transportations.filter(t => t.id !== itemToDelete));
             setIsDeleteModalOpen(false);
         } catch (err) {
@@ -217,7 +218,7 @@ const TransportationPage = () => {
                                 {filteredTransportations.map((t) => (
                                     <tr key={t.id} className="hover:bg-slate-50/30 transition-colors group">
                                         <td className="px-6 py-4">
-                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-widest font-bold ${t.transportationType === 'FLIGHT'
+                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-widest font-bold ${t.transportationType === TRANSPORTATION_TYPES.FLIGHT
                                                 ? 'bg-blue-100 text-blue-700'
                                                 : 'bg-green-100 text-green-700'
                                                 }`}>
@@ -324,7 +325,7 @@ const TransportationPage = () => {
                                     <div>
                                         <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 px-1 text-center font-outfit">Transportation Type</label>
                                         <div className={`grid grid-cols-4 gap-2 p-1 rounded-3xl transition-all ${errors.transportationType ? 'ring-2 ring-red-500' : ''}`}>
-                                            {['FLIGHT', 'BUS', 'SUBWAY', 'UBER'].map(type => (
+                                            {Object.values(TRANSPORTATION_TYPES).map(type => (
                                                 <button
                                                     key={type} type="button"
                                                     onClick={() => setFormData({ ...formData, transportationType: type })}
