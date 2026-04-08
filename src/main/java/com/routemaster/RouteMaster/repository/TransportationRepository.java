@@ -12,8 +12,6 @@ import java.util.List;
 @Repository
 public interface TransportationRepository extends JpaRepository<Transportation, Long> {
 
-    List<Transportation> findByOrigin(Location location);
-
     boolean existsByOriginIdOrDestinationId(Long originId, Long destinationId);
 
     @Query("SELECT t FROM Transportation t WHERE :day MEMBER OF t.operationDays")

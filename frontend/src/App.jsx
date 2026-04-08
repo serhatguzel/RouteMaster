@@ -35,7 +35,6 @@ function App() {
             </ProtectedRoute>
           } />
 
-          {/* C. Yönlendirmeler */}
           <Route index element={<Navigate to={PATHS.DASHBOARD} replace />} />
           <Route path="*" element={<Navigate to={PATHS.DASHBOARD} replace />} />
         </Route>

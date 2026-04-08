@@ -3,6 +3,7 @@ package com.routemaster.RouteMaster.service;
 import com.routemaster.RouteMaster.dto.AuthRequestDto;
 import com.routemaster.RouteMaster.dto.AuthResponseDto;
 import com.routemaster.RouteMaster.entity.User;
+import com.routemaster.RouteMaster.exception.InvalidTokenException;
 import com.routemaster.RouteMaster.repository.UserRepository;
 import com.routemaster.RouteMaster.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -28,15 +29,18 @@ public class AuthService {
     public AuthResponseDto login(AuthRequestDto request) {
         log.info("Login Attempt -> User: {}", request.getUsername());
 
+        // Spring Security şifreyi doğrular — hatalıysa BadCredentialsException fırlatır
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
 
-        User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
+        // UserDetails: roller (authorities) ve JWT üretimi için gerekli
         final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
         final String jwt = jwtUtil.generateToken(userDetails.getUsername());
+
+        // User entity: sadece DB id'si gerekiyor (refresh token deposu için)
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         String refreshToken = refreshTokenService.createRefreshToken(user.getId());
 
         String role = userDetails.getAuthorities().stream()
@@ -54,7 +58,7 @@ public class AuthService {
 
         if (userIdStr == null) {
             log.warn("Invalid or expired Refresh Token!");
-            throw new RuntimeException("Refresh Token is expired or invalid!");
+            throw new InvalidTokenException("Refresh Token is expired or invalid!");
         }
 
         User user = userRepository.findById(Long.valueOf(userIdStr))

@@ -69,13 +69,13 @@ public class DataInitializer implements CommandLineRunner {
         userRepository.save(agency);
 
         // --- Başlangıç Konum Verileri ---
-        Location ist = createLocation("Istanbul Airport", "Istanbul", "Turkey", "IST", LocationType.AIRPORT);
-        Location saw = createLocation("Sabiha Gokcen Airport", "Istanbul", "Turkey", "SAW", LocationType.AIRPORT);
-        Location jfk = createLocation("JFK International", "New York", "USA", "JFK", LocationType.AIRPORT);
-        Location lhr = createLocation("London Heathrow", "London", "UK", "LHR", LocationType.AIRPORT);
-        Location dxb = createLocation("Dubai International", "Dubai", "UAE", "DXB", LocationType.AIRPORT);
-        Location center = createLocation("Istanbul City Center", "Istanbul", "Turkey", "CCIST", LocationType.OTHER);
-        Location busStation = createLocation("Esenler Bus Station", "Istanbul", "Turkey", "BSIST", LocationType.OTHER);
+        Location ist = createLocation("Istanbul Airport", "Istanbul", "Turkey", "IST", LocationType.AIRPORT, 41.2752, 28.7417);
+        Location saw = createLocation("Sabiha Gokcen Airport", "Istanbul", "Turkey", "SAW", LocationType.AIRPORT, 40.8986, 29.3092);
+        Location jfk = createLocation("JFK International", "New York", "USA", "JFK", LocationType.AIRPORT, 40.6413, -73.7781);
+        Location lhr = createLocation("London Heathrow", "London", "UK", "LHR", LocationType.AIRPORT, 51.4700, -0.4543);
+        Location dxb = createLocation("Dubai International", "Dubai", "UAE", "DXB", LocationType.AIRPORT, 25.2532, 55.3657);
+        Location center = createLocation("Istanbul City Center", "Istanbul", "Turkey", "CCIST", LocationType.OTHER, 41.0082, 28.9784);
+        Location busStation = createLocation("Esenler Bus Station", "Istanbul", "Turkey", "BSIST", LocationType.OTHER, 41.0395, 28.8920);
 
         // --- Başlangıç Sefer Verileri (Transportations) ---
         if (transportationRepository.count() == 0) {
@@ -101,17 +101,16 @@ public class DataInitializer implements CommandLineRunner {
         System.out.println("ROUTEMASTER: BAŞLANGIÇ VERİLERİ (ROLES, USERS, LOCATIONS & TRANSPORTATIONS) YÜKLENDİ!");
     }
 
-    private Location createLocation(String name, String city, String country, String code, LocationType type) {
-        return locationRepository.findByLocationCode(code)
-                .orElseGet(() -> {
-                    Location loc = new Location();
-                    loc.setName(name);
-                    loc.setCity(city);
-                    loc.setCountry(country);
-                    loc.setLocationCode(code);
-                    loc.setType(type);
-                    return locationRepository.save(loc);
-                });
+    private Location createLocation(String name, String city, String country, String code, LocationType type, Double lat, Double lon) {
+        Location location = new Location();
+        location.setName(name);
+        location.setCity(city);
+        location.setCountry(country);
+        location.setLocationCode(code);
+        location.setType(type);
+        location.setLatitude(lat);
+        location.setLongitude(lon);
+        return locationRepository.save(location);
     }
 
     private void saveTransportation(Location origin, Location destination, TransportationType type, Set<Integer> days) {

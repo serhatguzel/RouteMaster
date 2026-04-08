@@ -8,6 +8,7 @@ import com.routemaster.RouteMaster.entity.Transportation;
 import com.routemaster.RouteMaster.enums.TransportationType;
 import com.routemaster.RouteMaster.mapper.TransportationMapper;
 import com.routemaster.RouteMaster.repository.TransportationRepository;
+import com.routemaster.RouteMaster.exception.InvalidRouteException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -69,7 +70,7 @@ public class RouteSearchServiceTest {
         });
 
         // WHEN
-        List<RouteSearchResponseDto> results = routeSearchService.searchRoutes(request);
+        List<RouteSearchResponseDto> results = routeSearchService.searchRoutes(request.getOriginId(), request.getDestinationId(), request.getDate());
 
         // THEN
         assertFalse(results.isEmpty());
@@ -96,7 +97,7 @@ public class RouteSearchServiceTest {
         });
 
         // WHEN
-        List<RouteSearchResponseDto> results = routeSearchService.searchRoutes(request);
+        List<RouteSearchResponseDto> results = routeSearchService.searchRoutes(request.getOriginId(), request.getDestinationId(), request.getDate());
 
         // THEN
         assertEquals(1, results.size());
@@ -125,7 +126,7 @@ public class RouteSearchServiceTest {
         });
 
         // WHEN
-        List<RouteSearchResponseDto> results = routeSearchService.searchRoutes(request);
+        List<RouteSearchResponseDto> results = routeSearchService.searchRoutes(request.getOriginId(), request.getDestinationId(), request.getDate());
 
         // THEN
         assertEquals(1, results.size());
@@ -142,7 +143,7 @@ public class RouteSearchServiceTest {
     void shouldThrowExceptionWhenOriginAndDestinationSame() {
         RouteSearchRequestDto request = new RouteSearchRequestDto(1L, 1L, LocalDate.now());
         
-        assertThrows(RuntimeException.class, () -> routeSearchService.searchRoutes(request));
+        assertThrows(InvalidRouteException.class, () -> routeSearchService.searchRoutes(request.getOriginId(), request.getDestinationId(), request.getDate()));
     }
 
     @Test
@@ -156,7 +157,7 @@ public class RouteSearchServiceTest {
                 .thenReturn(Arrays.asList(flightAB, flightBC));
 
         // WHEN
-        List<RouteSearchResponseDto> results = routeSearchService.searchRoutes(request);
+        List<RouteSearchResponseDto> results = routeSearchService.searchRoutes(request.getOriginId(), request.getDestinationId(), request.getDate());
 
         // THEN
         assertTrue(results.isEmpty(), "Routes with multiple flights should be excluded");

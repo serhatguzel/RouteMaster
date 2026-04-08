@@ -21,7 +21,8 @@ public class RouteSearchController {
 
     @GetMapping("/search")
     public ResponseEntity<List<RouteSearchResponseDto>> searchRoute(@Valid RouteSearchRequestDto request) {
-        List<RouteSearchResponseDto> routes = routeSearchService.searchRoutes(request);
+        List<RouteSearchResponseDto> routes = routeSearchService.searchRoutes(
+                request.getOriginId(), request.getDestinationId(), request.getDate());
         return ResponseEntity.ok(routes);
     }
 }

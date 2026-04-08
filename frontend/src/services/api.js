@@ -8,6 +8,7 @@ const api = axios.create({
   },
 });
 
+// İstek interceptor: Her isteğe Access Token ekle
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
@@ -16,54 +17,66 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
+// Yanıt interceptor: 401 gelirse Refresh Token ile yenile
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (error.response && error.response.status === 401
-      && !originalRequest._retry) {
+
+    if (error.response && error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
-        const refreshToken = localStorage.getItem('REFRESH_TOKEN');
+        const refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
 
         if (!refreshToken) {
           throw new Error('No refresh token available');
         }
 
         const res = await axios.post('/api/auth/refresh', refreshToken, {
-          headers: { 'Content-Type': 'text/plain' }
-
+          headers: { 'Content-Type': 'text/plain' },
         });
+
         if (res.status === 200) {
           const { accessToken } = res.data;
-
           localStorage.setItem(STORAGE_KEYS.TOKEN, accessToken);
-
           originalRequest.headers.Authorization = `Bearer ${accessToken}`;
           return api(originalRequest);
         }
-
       } catch (refreshError) {
-        logOutAndRedirect();
+        clearStorageAndRedirect();
       }
-
     }
+
     return Promise.reject(error);
   }
 );
 
-const logOutAndRedirect = () => {
+// localStorage temizle ve login'e yönlendir
+const clearStorageAndRedirect = () => {
   localStorage.removeItem(STORAGE_KEYS.TOKEN);
-  localStorage.removeItem('REFRESH_TOKEN');
+  localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
   localStorage.removeItem(STORAGE_KEYS.ROLE);
   window.location.href = PATHS.LOGIN;
 };
 
+// Backend'e logout isteği gönder, sonra localStorage temizle
+export const logout = async () => {
+  const refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
+  try {
+    if (refreshToken) {
+      await axios.post('/api/auth/logout', null, {
+        headers: { 'X-Refresh-Token': refreshToken },
+      });
+    }
+  } catch (e) {
+    // Sunucu hatası olsa bile temizlik yapılır
+  } finally {
+    clearStorageAndRedirect();
+  }
+};
 
 export default api;

@@ -1,5 +1,6 @@
 package com.routemaster.RouteMaster.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.routemaster.RouteMaster.enums.TransportationType;
 import com.routemaster.RouteMaster.validation.ValidOperationDays;
 import jakarta.persistence.*;
@@ -34,10 +35,12 @@ public class TransportationDto implements Serializable {
     @Enumerated(EnumType.STRING)
     private TransportationType transportationType;
 
+    @Builder.Default
     @ValidOperationDays
     @NotEmpty(message = "Operating days cannot be empty")
     private Set<Integer> operationDays = new HashSet<>();
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public List<String> getOperationDayNames() {
         return operationDays.stream()
                 .sorted()

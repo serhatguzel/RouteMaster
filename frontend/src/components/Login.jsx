@@ -40,7 +40,7 @@ const Login = () => {
       const response = await axios.post('/api/auth/login', { username, password });
       if (response.data.accessToken) {
         localStorage.setItem(STORAGE_KEYS.TOKEN, response.data.accessToken);
-        localStorage.setItem('REFRESH_TOKEN', response.data.refreshToken);
+        localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, response.data.refreshToken);
         localStorage.setItem(STORAGE_KEYS.ROLE, response.data.role);
         navigate(PATHS.DASHBOARD);
       }

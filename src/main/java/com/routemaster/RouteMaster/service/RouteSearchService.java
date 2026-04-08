@@ -1,9 +1,9 @@
 package com.routemaster.RouteMaster.service;
 
-import com.routemaster.RouteMaster.dto.RouteSearchRequestDto;
 import com.routemaster.RouteMaster.dto.RouteSearchResponseDto;
 import com.routemaster.RouteMaster.entity.Transportation;
 import com.routemaster.RouteMaster.enums.TransportationType;
+import com.routemaster.RouteMaster.exception.InvalidRouteException;
 import com.routemaster.RouteMaster.mapper.TransportationMapper;
 import com.routemaster.RouteMaster.repository.TransportationRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,17 +25,17 @@ public class RouteSearchService {
     private final TransportationRepository transportationRepository;
     private final TransportationMapper transportationMapper;
 
-    @Cacheable(value = "routes", key = "#request.originId + '-' + #request.destinationId + '-' + #request.date")
-    public List<RouteSearchResponseDto> searchRoutes(RouteSearchRequestDto request) {
+    @Cacheable(value = "routes", key = "#originId + '-' + #destinationId + '-' + #date")
+    public List<RouteSearchResponseDto> searchRoutes(Long originId, Long destinationId, LocalDate date) {
 
-        if (request.getOriginId().equals(request.getDestinationId())) {
-            throw new RuntimeException("Origin and Destination cannot be the same.");
+        if (originId.equals(destinationId)) {
+            throw new InvalidRouteException("Origin and Destination cannot be the same.");
         }
 
         log.info("Started Route Search: Origin Id: {}, Destination Id: {}, Date: {}", 
-                request.getOriginId(), request.getDestinationId(), request.getDate());
+                originId, destinationId, date);
 
-        int dayOfWeek = request.getDate().getDayOfWeek().getValue();
+        int dayOfWeek = date.getDayOfWeek().getValue();
 
         List<Transportation> allDailyRoutes = transportationRepository.findByOperationDaysContaining(dayOfWeek);
 
@@ -45,7 +45,7 @@ public class RouteSearchService {
         List<RouteSearchResponseDto> validRoutes = new ArrayList<>();
         List<Transportation> currentPath = new ArrayList<>();
 
-        findPathsDFS(request.getOriginId(), request.getDestinationId(), routeGraph, currentPath, validRoutes);
+        findPathsDFS(originId, destinationId, routeGraph, currentPath, validRoutes);
 
         log.info("Searching Completed: Result of routes is {}", validRoutes.size());
 

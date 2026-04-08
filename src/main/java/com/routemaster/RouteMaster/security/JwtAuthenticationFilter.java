@@ -32,30 +32,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwt;
         final String username;
 
-        // 1. Kapıda bilet kontrolü (Header'da "Bearer " var mı?)
+        // Kapıda token kontrolü (Header'da "Bearer " var mı?)
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // 2. Bileti al ("Bearer " yazısını yani ilk 7 karakteri kes)
+        // 2. Token'ı al ("Bearer " yazısını kes)
         jwt = authHeader.substring(7);
         try {
             username = jwtUtil.extractUsername(jwt);
         } catch (Exception e) {
-            // Sahte bilet! İçeri alma.
+            // Sahte token! İçeri alma.
             filterChain.doFilter(request, response);
             return;
         }
 
-        // 3. Biletteki isim veritabanında var mı ve giriş henüz yapılmamış mı?
+        // 3. Tokendaki isim veritabanında var mı ve giriş henüz yapılmamış mı
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-            // Biletin süresi ve imzası geçerli mi?
+            // Token süresi ve signature geçerli mi?
             if (jwtUtil.validateToken(jwt)) {
-                // Şahane! Kişiye "Güvenli Kart" ver ve kapıdan içeri al.
+                // OK
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities()
                 );
@@ -64,7 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-        // İşlemlere devam et
+        // Devam
         filterChain.doFilter(request, response);
     }
 }

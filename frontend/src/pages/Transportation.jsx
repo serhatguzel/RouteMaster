@@ -54,7 +54,6 @@ const TransportationPage = () => {
         if (errors.operationDays) setErrors({ ...errors, operationDays: false });
     };
 
-    /* --- VALIDATION LOGIC --- */
     const validate = () => {
         let tempErrors = {};
         let errorMessage = '';
@@ -82,7 +81,6 @@ const TransportationPage = () => {
         return Object.keys(tempErrors).length === 0;
     };
 
-    /* --- CRUD LOGIC --- */
     const handleAdd = () => {
         setFormData({
             origin: { id: '' },
@@ -170,7 +168,6 @@ const TransportationPage = () => {
 
     return (
         <>
-            {/* ERROR TOAST - EN ÜSTTE */}
             {error && (
                 <div className="fixed top-6 right-6 z-[999] bg-red-50 border border-red-100 text-red-600 px-6 py-4 rounded-3xl shadow-2xl animate-bounce-in flex items-center gap-3">
                     <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
@@ -179,7 +176,6 @@ const TransportationPage = () => {
             )}
 
             <div className="space-y-6 animate-fade-in pb-12">
-                {/* HEADER & SEARCH */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                         <h1 className="text-3xl font-bold font-outfit text-slate-900">Transportation Management</h1>

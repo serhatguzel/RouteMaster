@@ -42,8 +42,6 @@ public class JwtUtil {
         }
     }
 
-    // ---- Yardımcı Metotlar (Arka Planda Mekaniği Çalıştıran İşçiler) ----
-
     private SecretKey getSignInKey() {
         byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);

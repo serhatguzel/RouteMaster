@@ -3,6 +3,9 @@ package com.routemaster.RouteMaster.service;
 import com.routemaster.RouteMaster.dto.TransportationDto;
 import com.routemaster.RouteMaster.entity.Location;
 import com.routemaster.RouteMaster.entity.Transportation;
+import com.routemaster.RouteMaster.enums.LocationType;
+import com.routemaster.RouteMaster.enums.TransportationType;
+import com.routemaster.RouteMaster.exception.InvalidRouteException;
 import com.routemaster.RouteMaster.mapper.TransportationMapper;
 import com.routemaster.RouteMaster.repository.LocationRepository;
 import com.routemaster.RouteMaster.repository.TransportationRepository;
@@ -12,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,6 +35,7 @@ public class TransportationService {
         this.transportationMapper = transportationMapper;
     }
 
+    @Cacheable(value = "transportations", key = "#id")
     public TransportationDto getTransportationById(Long id) {
         log.info("Getting Transportation -> Id: {}", id);
         Transportation entity = transportationRepository.findById(id)
@@ -65,7 +70,15 @@ public class TransportationService {
 
         if (!transportation.isValidRoute()) {
             log.error("Origin and Destination locations cannot be the same.");
-            throw new RuntimeException("Origin and Destination locations cannot be the same.");
+            throw new InvalidRouteException("Origin and Destination locations cannot be the same.");
+        }
+
+        if (transportation.getTransportationType() == TransportationType.FLIGHT) {
+            if (origin.getType() != LocationType.AIRPORT || destination.getType() != LocationType.AIRPORT) {
+                log.error("Flight can only be between AIRPORT locations. Origin: {}, Destination: {}",
+                        origin.getType(), destination.getType());
+                throw new InvalidRouteException("Flight transportations can only be between AIRPORT locations.");
+            }
         }
 
         Transportation saved = transportationRepository.save(transportation);
@@ -76,7 +89,11 @@ public class TransportationService {
     }
 
     @Transactional
-    @CacheEvict(value = { "transportations", "routes" }, allEntries = true)
+    @Caching(evict = {
+            @CacheEvict(value = "transportations", key = "#id"),
+            @CacheEvict(value = "transportations", key = "'all'"),
+            @CacheEvict(value = "routes", allEntries = true)
+    })
     public TransportationDto updateTransportation(Long id, TransportationDto transportationDto) {
         log.info("Updating Transportation -> Id: {}", id);
         Transportation entity = transportationRepository.findById(id)
@@ -90,7 +107,11 @@ public class TransportationService {
     }
 
     @Transactional
-    @CacheEvict(value = { "transportations", "routes" }, allEntries = true)
+    @Caching(evict = {
+            @CacheEvict(value = "transportations", key = "#id"),
+            @CacheEvict(value = "transportations", key = "'all'"),
+            @CacheEvict(value = "routes", allEntries = true)
+    })
     public void deleteTransportation(Long id) {
         log.warn("Deleting Transportation -> Id: {}", id);
 

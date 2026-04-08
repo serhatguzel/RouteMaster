@@ -13,5 +13,6 @@ export const PATHS = {
 
 export const STORAGE_KEYS = {
     TOKEN: 'token',
-    ROLE: 'role'
+    ROLE: 'role',
+    REFRESH_TOKEN: 'REFRESH_TOKEN'
 };
