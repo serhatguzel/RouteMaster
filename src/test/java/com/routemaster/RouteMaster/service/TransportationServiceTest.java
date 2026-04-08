@@ -213,6 +213,8 @@ public class TransportationServiceTest {
         Long targetId = 1L;
 
         when(transportationRepository.findById(targetId)).thenReturn(Optional.of(transportation));
+        when(locationRepository.findById(originLocationDto.getId())).thenReturn(Optional.of(originLocation));
+        when(locationRepository.findById(destinationLocationDto.getId())).thenReturn(Optional.of(destinationLocation));
         when(transportationRepository.save(any(Transportation.class))).thenReturn(transportation);
 
         TransportationDto updateRequestDto = TransportationDto.builder()
