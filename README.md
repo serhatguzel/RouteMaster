@@ -59,19 +59,20 @@ RouteMaster is a system that manages the transportation network between airports
 
 The system finds valid route combinations with a maximum of **3 segments**:
 
-Valid Formats:
-─────────────────────────────────────────────
+### Valid Journey Combinations
 
-  [F]                  Flight Only
+The system calculates routes consisting of up to **3 segments** based on the following valid patterns:
 
-  [T] ──► [F]          Transfer + Flight
+| Pattern | Description |
+| :--- | :--- |
+| `[ F ]` | **Direct Flight** (No transfers) |
+| `[ T ] ──► [ F ]` | **Transfer** to Airport + **Flight** |
+| `[ F ] ──► [ T ]` | **Flight** + **Transfer** to City Center |
+| `[ T ] ──► [ F ] ──► [ T ]` | **Full Path** (Transfer + Flight + Transfer) |
 
-  [F] ──► [T]          Flight + Transfer
-
-  [T] ──► [F] ──► [T]  Transfer + Flight + Transfer
-
-─────────────────────────────────────────────
-  F = FLIGHT  |  T = Transfer (BUS / SUBWAY / UBER)
+> [!NOTE]
+> **F** = FLIGHT (Aviation)  
+> **T** = TRANSFER (BUS, SUBWAY, or UBER)
 
 **Rules:**
 - A route can contain **exactly 1 flight**.
