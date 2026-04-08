@@ -5,6 +5,7 @@ import axios from 'axios';
 import loginPhoto from '../assets/login-screen.png';
 import logo from '../assets/turkish-airlines-logo.png';
 import { PATHS, STORAGE_KEYS } from '../utils/constants';
+import { getErrorMessage } from '../utils/errorUtils';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -45,7 +46,7 @@ const Login = () => {
         navigate(PATHS.DASHBOARD);
       }
     } catch (err) {
-      setApiError(err.response?.data?.message || 'Invalid username or password');
+      setApiError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -53,7 +54,7 @@ const Login = () => {
 
   return (
     <div className="flex h-screen w-screen bg-white overflow-hidden m-0 p-0 absolute inset-0">
-      {/* Sol Bölüm (Resim) Aynı Kalıyor */}
+      {/* Sol Bölüm*/}
       <div className="flex-shrink-0 w-1/2 h-full relative overflow-hidden bg-no-repeat"
         style={{ backgroundImage: `url(${loginPhoto})`, backgroundSize: 'cover' }}>
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />

@@ -78,12 +78,18 @@ public class LocationService {
     @Caching(evict = {
             @CacheEvict(value = "locations", key = "#id"),
             @CacheEvict(value = "locations", key = "'all'"),
+            @CacheEvict(value = "transportations", allEntries = true),
             @CacheEvict(value = "routes", allEntries = true)
     })
     public LocationDto updateLocation(Long id, LocationDto locationDto) {
         log.info("Updating Location -> Id: {}", id);
         Location entity = locationRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Location not found with id: " + id));
+
+        if (locationRepository.existsByLocationCodeAndIdNot(locationDto.getLocationCode(), id)) {
+            log.error("Location code already exists for another location: {}", locationDto.getLocationCode());
+            throw new DuplicateLocationCodeException(locationDto.getLocationCode());
+        }
 
         locationMapper.updateEntityFromDto(locationDto, entity);
 
@@ -96,6 +102,7 @@ public class LocationService {
     @Caching(evict = {
             @CacheEvict(value = "locations", key = "#id"),
             @CacheEvict(value = "locations", key = "'all'"),
+            @CacheEvict(value = "transportations", allEntries = true),
             @CacheEvict(value = "routes", allEntries = true)
     })
     public void deleteLocation(Long id) {

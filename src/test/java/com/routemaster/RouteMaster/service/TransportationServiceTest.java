@@ -4,6 +4,7 @@ import com.routemaster.RouteMaster.dto.LocationDto;
 import com.routemaster.RouteMaster.dto.TransportationDto;
 import com.routemaster.RouteMaster.entity.Location;
 import com.routemaster.RouteMaster.entity.Transportation;
+import com.routemaster.RouteMaster.enums.LocationType;
 import com.routemaster.RouteMaster.enums.TransportationType;
 import com.routemaster.RouteMaster.mapper.TransportationMapper;
 import com.routemaster.RouteMaster.repository.LocationRepository;
@@ -76,6 +77,7 @@ public class TransportationServiceTest {
                 .country("Turkey")
                 .city("Istanbul")
                 .locationCode("IST")
+                .type(LocationType.AIRPORT)
                 .build();
 
         destinationLocation = Location.builder()
@@ -84,6 +86,7 @@ public class TransportationServiceTest {
                 .country("England")
                 .city("London")
                 .locationCode("LHB")
+                .type(LocationType.AIRPORT)
                 .build();
 
         transportationDto = TransportationDto.builder()

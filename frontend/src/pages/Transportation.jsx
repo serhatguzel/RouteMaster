@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { Plus, Trash2, Loader2, Search, Edit } from 'lucide-react';
+import { getErrorMessage } from '../utils/errorUtils';
 
 const TransportationPage = () => {
     const [loading, setLoading] = useState(true);
@@ -36,7 +37,7 @@ const TransportationPage = () => {
             setTransportations(transRes.data);
             setLocations(locRes.data);
         } catch (err) {
-            setError('Veriler yüklenirken bir hata oluştu.');
+            setError(getErrorMessage(err));
         } finally {
             setLoading(false);
         }
@@ -124,7 +125,7 @@ const TransportationPage = () => {
             setIsModalOpen(false);
             setErrors({});
         } catch (err) {
-            setError('Something went wrong. Please check your data.');
+            setError(getErrorMessage(err));
             setTimeout(() => setError(''), 3000);
         }
     };
@@ -140,7 +141,7 @@ const TransportationPage = () => {
             setTransportations(transportations.filter(t => t.id !== itemToDelete));
             setIsDeleteModalOpen(false);
         } catch (err) {
-            setError('Could not delete. It might be used by another service.');
+            setError(getErrorMessage(err));
             setIsDeleteModalOpen(false);
         }
     };
@@ -379,26 +380,29 @@ const TransportationPage = () => {
                 {/* DELETE MODAL */}
                 {isDeleteModalOpen && (
                     <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
-                        <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-md" onClick={() => setIsDeleteModalOpen(false)}></div>
-                        <div className="relative bg-white w-full max-sm rounded-[2.5rem] shadow-2xl p-10 text-center animate-bounce-in border border-slate-100">
-                            <div className="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm animate-fade-in"
+                            onClick={() => setIsDeleteModalOpen(false)}></div>
+
+                        <div className="relative bg-white rounded-[2.5rem] shadow-2xl p-10 max-w-sm w-full animate-bounce-in border border-slate-100 text-center">
+                            <div className="w-20 h-20 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
                                 <Trash2 size={40} />
                             </div>
-                            <h3 className="text-2xl font-bold text-slate-900 mb-3 font-outfit">Are you sure?</h3>
-                            <p className="text-slate-500 text-sm mb-8 leading-relaxed font-medium">This action cannot be undone. This route will be permanently removed.</p>
-
-                            <div className="flex gap-3 text-center">
+                            <h3 className="text-2xl font-bold text-slate-900 mb-3 font-outfit uppercase tracking-tight">Are you sure?</h3>
+                            <p className="text-slate-500 text-sm mb-8 leading-relaxed font-medium">
+                                This action cannot be undone. This route will be permanently removed.
+                            </p>
+                            <div className="flex gap-3">
                                 <button
                                     onClick={() => setIsDeleteModalOpen(false)}
-                                    className="flex-1 py-3 bg-slate-50 text-slate-500 rounded-3xl font-bold hover:bg-slate-100 transition-all text-[11px] font-bold tracking-widest"
+                                    className="flex-1 py-3.5 bg-slate-50 text-slate-500 rounded-2xl font-bold hover:bg-slate-100 transition-all text-xs"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     onClick={confirmDelete}
-                                    className="flex-1 py-3 bg-red-600 text-white rounded-3xl font-bold hover:bg-red-700 transition-all text-[11px] font-bold tracking-widest shadow-lg shadow-red-200"
+                                    className="flex-1 py-3.5 bg-red-600 text-white rounded-2xl font-bold hover:bg-red-700 shadow-lg shadow-red-200 transition-all text-xs"
                                 >
-                                    Delete Now
+                                    Delete
                                 </button>
                             </div>
                         </div>

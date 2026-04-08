@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { MapPin, Trash2, Loader2, Search, Edit } from 'lucide-react';
 import { fetchAirports, getHierarchicalData, getAirportsByCity } from '../services/airportService';
+import { getErrorMessage } from '../utils/errorUtils';
 
 const LocationPage = () => {
 
@@ -50,7 +51,7 @@ const LocationPage = () => {
             const response = await api.get('/locations');
             setLocations(response.data);
         } catch (err) {
-            setError('Locations could not be loaded.');
+            setError(getErrorMessage(err));
         } finally {
             setLoading(false);
         }
@@ -71,10 +72,10 @@ const LocationPage = () => {
 
     const handleEdit = (location) => {
         setFormData({
-            name: location.name,
-            locationCode: location.locationCode,
-            city: location.city,
-            country: location.country,
+            name: location.name || '',
+            locationCode: location.locationCode || '',
+            city: location.city || '',
+            country: location.country || '',
             type: location.type || 'AIRPORT'
         });
         setIsEditing(true);
@@ -115,7 +116,7 @@ const LocationPage = () => {
             setIsModalOpen(false);
             setError('');
         } catch (err) {
-            setError('İşlem sırasında bir hata oluştu. Lütfen bilgileri kontrol edin.');
+            setError(getErrorMessage(err));
             setTimeout(() => setError(''), 3000);
         }
     };
@@ -130,7 +131,7 @@ const LocationPage = () => {
             setLocations(locations.filter(loc => loc.id !== deleteModal.id));
             setDeleteModal({ show: false, id: null });
         } catch (err) {
-            setError('Delete operation failed.');
+            setError(getErrorMessage(err));
             setTimeout(() => setError(''), 3000);
         }
     };
@@ -142,7 +143,6 @@ const LocationPage = () => {
 
     return (
         <>
-            {/* ERROR TOAST - EN ÜSTTE VE NET */}
             {error && (
                 <div className="fixed top-6 right-6 z-[999] bg-red-50 border border-red-100 text-red-600 px-6 py-4 rounded-2xl shadow-2xl animate-bounce-in flex items-center gap-3">
                     <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
@@ -272,6 +272,9 @@ const LocationPage = () => {
                                         {Object.keys(hierarchy).map(country => (
                                             <option key={country} value={country}>{country}</option>
                                         ))}
+                                        {formData.country && !hierarchy[formData.country] && (
+                                            <option value={formData.country}>{formData.country}</option>
+                                        )}
                                     </select>
                                 </div>
 
@@ -294,6 +297,9 @@ const LocationPage = () => {
                                         {formData.country && hierarchy[formData.country]?.map(city => (
                                             <option key={city} value={city}>{city}</option>
                                         ))}
+                                        {formData.city && (!hierarchy[formData.country] || !hierarchy[formData.country].includes(formData.city)) && (
+                                            <option value={formData.city}>{formData.city}</option>
+                                        )}
                                     </select>
                                 </div>
 
@@ -343,6 +349,11 @@ const LocationPage = () => {
                                                         {airport.name} ({airport.iata})
                                                     </option>
                                                 ))}
+                                                {formData.locationCode && formData.type === 'AIRPORT' && !allAirports.find(a => a.iata === formData.locationCode) && (
+                                                    <option value={formData.locationCode}>
+                                                        {formData.name} ({formData.locationCode})
+                                                    </option>
+                                                )}
                                             </select>
                                         </div>
                                     </>

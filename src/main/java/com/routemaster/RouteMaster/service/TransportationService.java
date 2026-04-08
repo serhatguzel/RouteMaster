@@ -58,12 +58,39 @@ public class TransportationService {
     @CacheEvict(value = { "transportations", "routes" }, allEntries = true)
     public TransportationDto createTransportation(TransportationDto transportationDto) {
         log.info("Adding New Transportation: {}", transportationDto);
-        Location origin = locationRepository.findById(transportationDto.getOrigin().getId())
-                .orElseThrow(() -> new EntityNotFoundException("Origin location not found"));
-        Location destination = locationRepository.findById(transportationDto.getDestination().getId())
-                .orElseThrow(() -> new EntityNotFoundException("Destination location not found"));
-
         Transportation transportation = transportationMapper.toEntity(transportationDto);
+        
+        validateAndSetLocations(transportation, transportationDto);
+        
+        Transportation saved = transportationRepository.save(transportation);
+        log.info("Added New Transportation: {}", transportationDto);
+        return transportationMapper.toDto(saved);
+    }
+
+    @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "transportations", key = "#id"),
+            @CacheEvict(value = "transportations", key = "'all'"),
+            @CacheEvict(value = "routes", allEntries = true)
+    })
+    public TransportationDto updateTransportation(Long id, TransportationDto transportationDto) {
+        log.info("Updating Transportation -> Id: {}", id);
+        Transportation entity = transportationRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Transportation not found with id: " + id));
+
+        transportationMapper.updateEntityFromDto(transportationDto, entity);
+        
+        validateAndSetLocations(entity, transportationDto);
+
+        log.info("Updated Transportation -> Id: {}", id);
+        return transportationMapper.toDto(transportationRepository.save(entity));
+    }
+
+    private void validateAndSetLocations(Transportation transportation, TransportationDto dto) {
+        Location origin = locationRepository.findById(dto.getOrigin().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Origin location not found"));
+        Location destination = locationRepository.findById(dto.getDestination().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Destination location not found"));
 
         transportation.setOrigin(origin);
         transportation.setDestination(destination);
@@ -80,30 +107,6 @@ public class TransportationService {
                 throw new InvalidRouteException("Flight transportations can only be between AIRPORT locations.");
             }
         }
-
-        Transportation saved = transportationRepository.save(transportation);
-
-        log.info("Added New Transportation: {}", transportationDto);
-        return transportationMapper.toDto(saved);
-
-    }
-
-    @Transactional
-    @Caching(evict = {
-            @CacheEvict(value = "transportations", key = "#id"),
-            @CacheEvict(value = "transportations", key = "'all'"),
-            @CacheEvict(value = "routes", allEntries = true)
-    })
-    public TransportationDto updateTransportation(Long id, TransportationDto transportationDto) {
-        log.info("Updating Transportation -> Id: {}", id);
-        Transportation entity = transportationRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Transportation not found with id: " + id));
-
-        transportationMapper.updateEntityFromDto(transportationDto, entity);
-
-        log.info("Updated Transportation -> Id: {}", id);
-
-        return transportationMapper.toDto(transportationRepository.save(entity));
     }
 
     @Transactional

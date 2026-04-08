@@ -9,6 +9,7 @@ import java.util.List;
 public interface LocationRepository extends JpaRepository<Location, Long> {
 
     Boolean existsByLocationCode(String locationCode);
+    Boolean existsByLocationCodeAndIdNot(String locationCode, Long id);
     
     List<Location> findAllByOrderByCityAscNameAsc();
 

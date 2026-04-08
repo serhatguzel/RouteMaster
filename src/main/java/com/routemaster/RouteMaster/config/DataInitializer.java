@@ -108,8 +108,6 @@ public class DataInitializer implements CommandLineRunner {
         location.setCountry(country);
         location.setLocationCode(code);
         location.setType(type);
-        location.setLatitude(lat);
-        location.setLongitude(lon);
         return locationRepository.save(location);
     }
 

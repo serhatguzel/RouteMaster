@@ -110,6 +110,24 @@ public class LocationServiceTest {
     }
 
     @Test
+    @DisplayName("An error should be thrown when trying to update to a location code that already exists on another location.")
+    void shouldThrowExceptionWhenUpdatingToDuplicateLocationCode() {
+        // GIVEN
+        Long targetId = 1L;
+        LocationDto updateRequestDto = LocationDto.builder().locationCode("LHR").build();
+
+        when(locationRepository.findById(targetId)).thenReturn(Optional.of(locationEntity));
+        when(locationRepository.existsByLocationCodeAndIdNot("LHR", targetId)).thenReturn(true);
+
+        // WHEN & THEN
+        assertThrows(RuntimeException.class, () ->
+                locationService.updateLocation(targetId, updateRequestDto)
+        );
+
+        verify(locationRepository, never()).save(any());
+    }
+
+    @Test
     @DisplayName("An error should be thrown when trying to update an ID that doesn't exist.")
     void shouldThrowExceptionWhenLocationNotFoundForUpdate() {
         // Given

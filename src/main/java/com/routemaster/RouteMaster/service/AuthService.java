@@ -29,18 +29,18 @@ public class AuthService {
     public AuthResponseDto login(AuthRequestDto request) {
         log.info("Login Attempt -> User: {}", request.getUsername());
 
-        // Spring Security şifreyi doğrular — hatalıysa BadCredentialsException fırlatır
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        // Spring Security şifreyi doğrular
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
 
-        // UserDetails: roller (authorities) ve JWT üretimi için gerekli
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
+        // UserDetails ve JWT
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
         final String jwt = jwtUtil.generateToken(userDetails.getUsername());
-
-        // User entity: sadece DB id'si gerekiyor (refresh token deposu için)
-        User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        
         String refreshToken = refreshTokenService.createRefreshToken(user.getId());
 
         String role = userDetails.getAuthorities().stream()
