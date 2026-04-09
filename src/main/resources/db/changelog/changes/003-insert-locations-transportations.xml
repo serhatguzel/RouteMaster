@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="insert-locations" author="routemaster">
+        <insert tableName="locations">
+            <column name="id" valueNumeric="1"/>
+            <column name="name" value="Istanbul Airport"/>
+            <column name="city" value="Istanbul"/>
+            <column name="country" value="Turkey"/>
+            <column name="location_code" value="IST"/>
+            <column name="type" value="AIRPORT"/>
+        </insert>
+        <insert tableName="locations">
+            <column name="id" valueNumeric="2"/>
+            <column name="name" value="Sabiha Gokcen Airport"/>
+            <column name="city" value="Istanbul"/>
+            <column name="country" value="Turkey"/>
+            <column name="location_code" value="SAW"/>
+            <column name="type" value="AIRPORT"/>
+        </insert>
+        <insert tableName="locations">
+            <column name="id" valueNumeric="3"/>
+            <column name="name" value="JFK International"/>
+            <column name="city" value="New York"/>
+            <column name="country" value="USA"/>
+            <column name="location_code" value="JFK"/>
+            <column name="type" value="AIRPORT"/>
+        </insert>
+        <insert tableName="locations">
+            <column name="id" valueNumeric="4"/>
+            <column name="name" value="London Heathrow"/>
+            <column name="city" value="London"/>
+            <column name="country" value="UK"/>
+            <column name="location_code" value="LHR"/>
+            <column name="type" value="AIRPORT"/>
+        </insert>
+        <insert tableName="locations">
+            <column name="id" valueNumeric="5"/>
+            <column name="name" value="Dubai International"/>
+            <column name="city" value="Dubai"/>
+            <column name="country" value="UAE"/>
+            <column name="location_code" value="DXB"/>
+            <column name="type" value="AIRPORT"/>
+        </insert>
+        <insert tableName="locations">
+            <column name="id" valueNumeric="6"/>
+            <column name="name" value="Istanbul City Center"/>
+            <column name="city" value="Istanbul"/>
+            <column name="country" value="Turkey"/>
+            <column name="location_code" value="CCIST"/>
+            <column name="type" value="OTHER"/>
+        </insert>
+        <insert tableName="locations">
+            <column name="id" valueNumeric="7"/>
+            <column name="name" value="Esenler Bus Station"/>
+            <column name="city" value="Istanbul"/>
+            <column name="country" value="Turkey"/>
+            <column name="location_code" value="BSIST"/>
+            <column name="type" value="OTHER"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-transportations" author="routemaster">
+        <insert tableName="transportations">
+            <column name="id" valueNumeric="1"/>
+            <column name="origin_location_id" valueNumeric="1"/>
+            <column name="destination_location_id" valueNumeric="2"/>
+            <column name="transportation_type" value="FLIGHT"/>
+        </insert>
+        <insert tableName="transportations">
+            <column name="id" valueNumeric="2"/>
+            <column name="origin_location_id" valueNumeric="2"/>
+            <column name="destination_location_id" valueNumeric="1"/>
+            <column name="transportation_type" value="FLIGHT"/>
+        </insert>
+        <insert tableName="transportations">
+            <column name="id" valueNumeric="3"/>
+            <column name="origin_location_id" valueNumeric="1"/>
+            <column name="destination_location_id" valueNumeric="3"/>
+            <column name="transportation_type" value="FLIGHT"/>
+        </insert>
+        <insert tableName="transportations">
+            <column name="id" valueNumeric="4"/>
+            <column name="origin_location_id" valueNumeric="1"/>
+            <column name="destination_location_id" valueNumeric="4"/>
+            <column name="transportation_type" value="FLIGHT"/>
+        </insert>
+        <insert tableName="transportations">
+            <column name="id" valueNumeric="5"/>
+            <column name="origin_location_id" valueNumeric="2"/>
+            <column name="destination_location_id" valueNumeric="5"/>
+            <column name="transportation_type" value="FLIGHT"/>
+        </insert>
+        <insert tableName="transportations">
+            <column name="id" valueNumeric="6"/>
+            <column name="origin_location_id" valueNumeric="7"/>
+            <column name="destination_location_id" valueNumeric="1"/>
+            <column name="transportation_type" value="BUS"/>
+        </insert>
+        <insert tableName="transportations">
+            <column name="id" valueNumeric="7"/>
+            <column name="origin_location_id" valueNumeric="6"/>
+            <column name="destination_location_id" valueNumeric="2"/>
+            <column name="transportation_type" value="SUBWAY"/>
+        </insert>
+        <insert tableName="transportations">
+            <column name="id" valueNumeric="8"/>
+            <column name="origin_location_id" valueNumeric="1"/>
+            <column name="destination_location_id" valueNumeric="6"/>
+            <column name="transportation_type" value="UBER"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-transportation-days" author="routemaster">
+        <!-- T1: 1 to 7 -->
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="1"/><column name="operation_day" valueNumeric="1"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="1"/><column name="operation_day" valueNumeric="2"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="1"/><column name="operation_day" valueNumeric="3"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="1"/><column name="operation_day" valueNumeric="4"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="1"/><column name="operation_day" valueNumeric="5"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="1"/><column name="operation_day" valueNumeric="6"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="1"/><column name="operation_day" valueNumeric="7"/></insert>
+
+        <!-- T2: 1 to 7 -->
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="2"/><column name="operation_day" valueNumeric="1"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="2"/><column name="operation_day" valueNumeric="2"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="2"/><column name="operation_day" valueNumeric="3"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="2"/><column name="operation_day" valueNumeric="4"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="2"/><column name="operation_day" valueNumeric="5"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="2"/><column name="operation_day" valueNumeric="6"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="2"/><column name="operation_day" valueNumeric="7"/></insert>
+
+        <!-- T3: 1, 3, 5 -->
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="3"/><column name="operation_day" valueNumeric="1"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="3"/><column name="operation_day" valueNumeric="3"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="3"/><column name="operation_day" valueNumeric="5"/></insert>
+
+        <!-- T4: 2, 4, 6 -->
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="4"/><column name="operation_day" valueNumeric="2"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="4"/><column name="operation_day" valueNumeric="4"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="4"/><column name="operation_day" valueNumeric="6"/></insert>
+
+        <!-- T5: 6, 7 -->
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="5"/><column name="operation_day" valueNumeric="6"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="5"/><column name="operation_day" valueNumeric="7"/></insert>
+
+        <!-- T6: 1 to 5 -->
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="6"/><column name="operation_day" valueNumeric="1"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="6"/><column name="operation_day" valueNumeric="2"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="6"/><column name="operation_day" valueNumeric="3"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="6"/><column name="operation_day" valueNumeric="4"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="6"/><column name="operation_day" valueNumeric="5"/></insert>
+
+        <!-- T7: 1 to 7 -->
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="7"/><column name="operation_day" valueNumeric="1"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="7"/><column name="operation_day" valueNumeric="2"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="7"/><column name="operation_day" valueNumeric="3"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="7"/><column name="operation_day" valueNumeric="4"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="7"/><column name="operation_day" valueNumeric="5"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="7"/><column name="operation_day" valueNumeric="6"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="7"/><column name="operation_day" valueNumeric="7"/></insert>
+
+        <!-- T8: 1 to 7 -->
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="8"/><column name="operation_day" valueNumeric="1"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="8"/><column name="operation_day" valueNumeric="2"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="8"/><column name="operation_day" valueNumeric="3"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="8"/><column name="operation_day" valueNumeric="4"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="8"/><column name="operation_day" valueNumeric="5"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="8"/><column name="operation_day" valueNumeric="6"/></insert>
+        <insert tableName="transportation_operation_days"><column name="transportation_id" valueNumeric="8"/><column name="operation_day" valueNumeric="7"/></insert>
+    </changeSet>
+
+    <changeSet id="restart-sequences-h2" author="routemaster">
+        <sql>
+            ALTER TABLE locations ALTER COLUMN id RESTART WITH 100;
+            ALTER TABLE transportations ALTER COLUMN id RESTART WITH 100;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
