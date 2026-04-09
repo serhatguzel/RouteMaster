@@ -117,14 +117,16 @@ The system calculates routes consisting of up to **3 segments** based on the fol
 
 | Role | Location Management | Transportation Management | Route Search |
 |-----|:--------------:|:---------------:|:----------:|
-| **ADMIN** | ✅ | ✅ | ✅ |
-| **AGENCY** | ❌ | ❌ | ✅ |
+| **ADMIN** | ✅ (Full Access) | ✅ | ✅ |
+| **AGENCY** | 👁️ (View Only)  | ❌ | ✅ |
 
 ### Default Credentials (Development)
 | Username | Password | Role |
 |---------------|-------|-----|
 | `admin` | `admin123` | ADMIN |
 | `agency` | `agency123` | AGENCY |
+
+> 💡 **Developer Tip:** The login screen includes **"Fill Admin"** and **"Fill Agency"** buttons to auto-fill credentials for faster testing during development.
 
 ---
 
@@ -185,10 +187,10 @@ Open `http://localhost:5173` in your browser and log in with the default credent
 | POST | `/api/auth/login` | Login and receive tokens |
 | POST | `/api/auth/refresh` | Refresh Access Token |
 
-### Location Management (ADMIN)
+### Location Management (ADMIN / AGENCY)
 | Method | Endpoint | Description |
 |--------|----------|----------|
-| GET | `/api/v1/locations` | List all locations |
+| GET | `/api/v1/locations` | List all locations (Accessible by AGENCY) |
 | GET | `/api/v1/locations/{id}` | Get location by ID |
 | POST | `/api/v1/locations` | Add new location |
 | PUT | `/api/v1/locations/{id}` | Update location |
@@ -249,6 +251,6 @@ The Dockerfile uses a **multi-stage** build:
 
 ## 📝 Notes
 
-- Since the database is **in-memory (H2)**, all data is reset whenever the application restarts. the `DataInitializer` automatically loads seed data.
+- Since the database is **in-memory (H2)**, all data is reset whenever the application restarts. Base roles, users, locations, and transportations are rapidly populated on startup using **Liquibase XML changelogs** (replacing the slower DataInitializer).
 - The JWT **Access Token** is valid for 15 minutes. When it expires, the Axios interceptor automatically renews it using the **Refresh Token**.
 - Refresh Tokens are stored in **Redis** and are valid for 7 days.
