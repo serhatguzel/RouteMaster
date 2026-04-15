@@ -1,21 +1,17 @@
 package com.routemaster.RouteMaster.dto;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.Builder;
 
 import java.io.Serializable;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-public class RouteSearchResponseDto implements Serializable {
+public record RouteSearchResponseDto(
 
-    private TransportationDto beforeFlight;
+    TransportationDto beforeFlight,
 
     @NotNull
-    private TransportationDto flight;
+    TransportationDto flight,
 
-    private TransportationDto afterFlight;
-}
+    TransportationDto afterFlight
+) implements Serializable {}

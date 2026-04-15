@@ -2,6 +2,7 @@ package com.routemaster.RouteMaster.security;
 
 import com.routemaster.RouteMaster.entity.User;
 import com.routemaster.RouteMaster.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,18 +14,15 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    public CustomUserDetailsService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // 1. Veritabanından kullanıcıyı bul
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findWithRolesByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Kullanici bulunamadi: " + username));
 
         // 2. Kullanıcının rollerini Spring Security'nin anlayacağı formata (GrantedAuthority) çevir

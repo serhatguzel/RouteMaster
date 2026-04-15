@@ -33,6 +33,36 @@ public class GlobalExceptionHandler {
         return pd;
     }
 
+    // Spring Security - Yanlış kullanıcı adı/şifre
+    @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)
+    public ProblemDetail handleBadCredentialsException(
+            org.springframework.security.authentication.BadCredentialsException ex) {
+        ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "Invalid username or password");
+        pd.setTitle("Authentication Failed");
+        pd.setType(URI.create(BASE_URI + "bad-credentials"));
+        pd.setProperty("errorCode", "BAD_CREDENTIALS");
+        return pd;
+    }
+
+    // DTO Validasyon (Geçersiz paremetreler, regex hataları vs.)
+    @ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
+    public ProblemDetail handleValidationException(org.springframework.web.bind.MethodArgumentNotValidException ex) {
+        ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Girdi doğrulama hatası (Validation Failed)");
+        pd.setTitle("Validation Error");
+        pd.setType(URI.create(BASE_URI + "validation-error"));
+        pd.setProperty("errorCode", "VALIDATION_ERROR");
+
+        // Hangi alanlarda ne hata olduğunu bir harita(Map) içinde topluyoruz
+        java.util.Map<String, String> errors = new java.util.HashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(error -> {
+            errors.put(error.getField(), error.getDefaultMessage());
+        });
+
+        // Hatalı paramtreleri front-end'in okuyabileceği şekilde JSON objesinin içine atıyoruz
+        pd.setProperty("invalidParams", errors);
+        return pd;
+    }
+
     // Beklenmeyen tüm hatalar
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleGeneralException(Exception ex) {

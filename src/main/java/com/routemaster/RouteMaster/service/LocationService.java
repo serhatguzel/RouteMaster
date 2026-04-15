@@ -11,6 +11,7 @@ import java.util.List;
 import com.routemaster.RouteMaster.repository.TransportationRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.cache.annotation.CacheEvict;
@@ -19,6 +20,7 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class LocationService {
 
@@ -27,13 +29,6 @@ public class LocationService {
     private final TransportationRepository transportationRepository;
 
     private final LocationMapper locationMapper;
-
-    public LocationService(LocationRepository locationRepository, TransportationRepository transportationRepository,
-            LocationMapper locationMapper) {
-        this.locationRepository = locationRepository;
-        this.transportationRepository = transportationRepository;
-        this.locationMapper = locationMapper;
-    }
 
     @Cacheable(value = "locations", key = "#id")
     public LocationDto getLocationById(Long id) {
@@ -62,9 +57,9 @@ public class LocationService {
     @CacheEvict(value = "locations", allEntries = true)
     public LocationDto createLocation(LocationDto locationDto) {
         log.info("Adding New Location: {}", locationDto);
-        if (locationRepository.existsByLocationCode(locationDto.getLocationCode())) {
-            log.error("Location code already exists: {}", locationDto.getLocationCode());
-            throw new DuplicateLocationCodeException(locationDto.getLocationCode());
+        if (locationRepository.existsByLocationCode(locationDto.locationCode())) {
+            log.error("Location code already exists: {}", locationDto.locationCode());
+            throw new DuplicateLocationCodeException(locationDto.locationCode());
         }
 
         Location location = locationMapper.toEntity(locationDto);
@@ -86,9 +81,9 @@ public class LocationService {
         Location entity = locationRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Location not found with id: " + id));
 
-        if (locationRepository.existsByLocationCodeAndIdNot(locationDto.getLocationCode(), id)) {
-            log.error("Location code already exists for another location: {}", locationDto.getLocationCode());
-            throw new DuplicateLocationCodeException(locationDto.getLocationCode());
+        if (locationRepository.existsByLocationCodeAndIdNot(locationDto.locationCode(), id)) {
+            log.error("Location code already exists for another location: {}", locationDto.locationCode());
+            throw new DuplicateLocationCodeException(locationDto.locationCode());
         }
 
         locationMapper.updateEntityFromDto(locationDto, entity);

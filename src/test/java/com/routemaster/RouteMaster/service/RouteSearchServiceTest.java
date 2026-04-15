@@ -70,14 +70,14 @@ public class RouteSearchServiceTest {
         });
 
         // WHEN
-        List<RouteSearchResponseDto> results = routeSearchService.searchRoutes(request.getOriginId(), request.getDestinationId(), request.getDate());
+        List<RouteSearchResponseDto> results = routeSearchService.searchRoutes(request.originId(), request.destinationId(), request.date());
 
         // THEN
         assertFalse(results.isEmpty());
         assertEquals(1, results.size());
-        assertNotNull(results.get(0).getFlight());
-        assertNull(results.get(0).getBeforeFlight());
-        assertNull(results.get(0).getAfterFlight());
+        assertNotNull(results.get(0).flight());
+        assertNull(results.get(0).beforeFlight());
+        assertNull(results.get(0).afterFlight());
     }
 
     @Test
@@ -97,14 +97,14 @@ public class RouteSearchServiceTest {
         });
 
         // WHEN
-        List<RouteSearchResponseDto> results = routeSearchService.searchRoutes(request.getOriginId(), request.getDestinationId(), request.getDate());
+        List<RouteSearchResponseDto> results = routeSearchService.searchRoutes(request.originId(), request.destinationId(), request.date());
 
         // THEN
         assertEquals(1, results.size());
-        assertNotNull(results.get(0).getBeforeFlight());
-        assertNotNull(results.get(0).getFlight());
-        assertEquals(200L, results.get(0).getBeforeFlight().getId());
-        assertEquals(101L, results.get(0).getFlight().getId());
+        assertNotNull(results.get(0).beforeFlight());
+        assertNotNull(results.get(0).flight());
+        assertEquals(200L, results.get(0).beforeFlight().id());
+        assertEquals(101L, results.get(0).flight().id());
     }
 
     @Test
@@ -126,16 +126,16 @@ public class RouteSearchServiceTest {
         });
 
         // WHEN
-        List<RouteSearchResponseDto> results = routeSearchService.searchRoutes(request.getOriginId(), request.getDestinationId(), request.getDate());
+        List<RouteSearchResponseDto> results = routeSearchService.searchRoutes(request.originId(), request.destinationId(), request.date());
 
         // THEN
         assertEquals(1, results.size());
-        assertNotNull(results.get(0).getBeforeFlight());
-        assertNotNull(results.get(0).getFlight());
-        assertNotNull(results.get(0).getAfterFlight());
-        assertEquals(301L, results.get(0).getBeforeFlight().getId());
-        assertEquals(101L, results.get(0).getFlight().getId());
-        assertEquals(302L, results.get(0).getAfterFlight().getId());
+        assertNotNull(results.get(0).beforeFlight());
+        assertNotNull(results.get(0).flight());
+        assertNotNull(results.get(0).afterFlight());
+        assertEquals(301L, results.get(0).beforeFlight().id());
+        assertEquals(101L, results.get(0).flight().id());
+        assertEquals(302L, results.get(0).afterFlight().id());
     }
 
     @Test
@@ -143,7 +143,7 @@ public class RouteSearchServiceTest {
     void shouldThrowExceptionWhenOriginAndDestinationSame() {
         RouteSearchRequestDto request = new RouteSearchRequestDto(1L, 1L, LocalDate.now());
         
-        assertThrows(InvalidRouteException.class, () -> routeSearchService.searchRoutes(request.getOriginId(), request.getDestinationId(), request.getDate()));
+        assertThrows(InvalidRouteException.class, () -> routeSearchService.searchRoutes(request.originId(), request.destinationId(), request.date()));
     }
 
     @Test
@@ -157,7 +157,7 @@ public class RouteSearchServiceTest {
                 .thenReturn(Arrays.asList(flightAB, flightBC));
 
         // WHEN
-        List<RouteSearchResponseDto> results = routeSearchService.searchRoutes(request.getOriginId(), request.getDestinationId(), request.getDate());
+        List<RouteSearchResponseDto> results = routeSearchService.searchRoutes(request.originId(), request.destinationId(), request.date());
 
         // THEN
         assertTrue(results.isEmpty(), "Routes with multiple flights should be excluded");

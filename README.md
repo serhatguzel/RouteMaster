@@ -182,10 +182,10 @@ Open `http://localhost:5173` in your browser and log in with the default credent
 ## API Endpoints
 
 ### Authentication
-| Method | Endpoint | Description |
-|--------|----------|----------|
-| POST | `/api/auth/login` | Login and receive tokens |
-| POST | `/api/auth/refresh` | Refresh Access Token |
+| Method | Endpoint               | Description |
+|--------|------------------------|----------|
+| POST | `/api/v1/auth/login`   | Login and receive tokens |
+| POST | `/api/v1/auth/refresh` | Refresh Access Token |
 
 ### Location Management (ADMIN / AGENCY)
 | Method | Endpoint | Description |

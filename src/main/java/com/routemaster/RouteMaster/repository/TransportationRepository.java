@@ -1,15 +1,13 @@
 package com.routemaster.RouteMaster.repository;
 
-import com.routemaster.RouteMaster.entity.Location;
-import com.routemaster.RouteMaster.entity.Transportation;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
-import java.util.List;
 
+import com.routemaster.RouteMaster.entity.Transportation;
 
-@Repository
 public interface TransportationRepository extends JpaRepository<Transportation, Long> {
 
     boolean existsByOriginIdOrDestinationId(Long originId, Long destinationId);
@@ -18,4 +16,5 @@ public interface TransportationRepository extends JpaRepository<Transportation, 
     List<Transportation> findByOperationDaysContaining(@Param("day") Integer day);
 
     List<Transportation> findAllByOrderByOriginNameAsc();
+
 }

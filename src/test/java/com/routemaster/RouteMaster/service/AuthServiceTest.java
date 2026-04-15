@@ -52,9 +52,7 @@ public class AuthServiceTest {
 
     @BeforeEach
     void setUp() {
-        authRequest = new AuthRequestDto();
-        authRequest.setUsername("testuser");
-        authRequest.setPassword("password123");
+        authRequest = new AuthRequestDto("testUser", "paasword123");
 
         testUser = new User();
         testUser.setId(1L);
@@ -68,7 +66,7 @@ public class AuthServiceTest {
     @DisplayName("Should login successfully and return token set")
     void shouldLoginSuccessfully() {
         // GIVEN
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(testUser));
+        when(userRepository.findWithRolesByUsername(anyString())).thenReturn(Optional.of(testUser));
         when(userDetailsService.loadUserByUsername(anyString())).thenReturn(userDetails);
         when(userDetails.getUsername()).thenReturn("testuser");
         doReturn(Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")))
@@ -82,9 +80,9 @@ public class AuthServiceTest {
 
         // THEN
         assertNotNull(response);
-        assertEquals("mock-jwt-token", response.getAccessToken());
-        assertEquals("mock-refresh-token", response.getRefreshToken());
-        assertEquals("ROLE_USER", response.getRole());
+        assertEquals("mock-jwt-token", response.accessToken());
+        assertEquals("mock-refresh-token", response.refreshToken());
+        assertEquals("ROLE_USER", response.role());
         
         verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
     }
@@ -93,7 +91,7 @@ public class AuthServiceTest {
     @DisplayName("Should throw exception during login when user not found")
     void shouldThrowExceptionWhenUserNotFound() {
         // GIVEN
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+        when(userRepository.findWithRolesByUsername(anyString())).thenReturn(Optional.empty());
 
         // WHEN & THEN
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
@@ -117,8 +115,8 @@ public class AuthServiceTest {
 
         // THEN
         assertNotNull(response);
-        assertEquals("new-access-token", response.getAccessToken());
-        assertEquals(oldRefreshToken, response.getRefreshToken());
+        assertEquals("new-access-token", response.accessToken());
+        assertEquals(oldRefreshToken, response.refreshToken());
         verify(jwtUtil).generateToken("testuser");
     }
 

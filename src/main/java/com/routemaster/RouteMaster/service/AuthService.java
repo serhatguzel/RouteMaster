@@ -27,14 +27,14 @@ public class AuthService {
     private final JwtUtil jwtUtil;
 
     public AuthResponseDto login(AuthRequestDto request) {
-        log.info("Login Attempt -> User: {}", request.getUsername());
+        log.info("Login Attempt -> User: {}", request.username());
 
-        User user = userRepository.findByUsername(request.getUsername())
+        User user = userRepository.findWithRolesByUsername(request.username())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         // Spring Security şifreyi doğrular
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+                new UsernamePasswordAuthenticationToken(request.username(), request.password())
         );
 
         // UserDetails ve JWT
@@ -48,7 +48,7 @@ public class AuthService {
                 .map(auth -> auth.getAuthority())
                 .orElse("USER");
 
-        log.info("Login successful: User: {} is in the system", request.getUsername());
+        log.info("Login successful: User: {} is in the system", request.username());
 
         return new AuthResponseDto(jwt, refreshToken, role);
     }

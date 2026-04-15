@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -76,7 +77,7 @@ public class RouteSearchService {
             return;
         }
 
-        List<Transportation> nextSteps = routeGraph.getOrDefault(currentNodeId, new ArrayList<>());
+        List<Transportation> nextSteps = routeGraph.getOrDefault(currentNodeId, Collections.emptyList());
 
         for (Transportation nextStep : nextSteps) {
             if (!canAddToPath(currentPath, nextStep)) {

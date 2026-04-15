@@ -3,6 +3,7 @@ package com.routemaster.RouteMaster.controller;
 import com.routemaster.RouteMaster.dto.TransportationDto;
 import com.routemaster.RouteMaster.service.TransportationService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,14 +12,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/transportations")
+@RequiredArgsConstructor
 public class TransportationController {
 
     private final TransportationService transportationService;
-
-    public TransportationController(TransportationService transportationService) {
-        this.transportationService = transportationService;
-
-    }
 
     @GetMapping
     public ResponseEntity<List<TransportationDto>> getAllTransportations() {

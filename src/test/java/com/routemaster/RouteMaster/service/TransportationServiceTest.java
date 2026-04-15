@@ -111,13 +111,13 @@ public class TransportationServiceTest {
         when(transportationRepository.findById(any())).thenReturn(Optional.of(transportation));
 
         // When
-        TransportationDto result = transportationService.getTransportationById(transportationDto.getId());
+        TransportationDto result = transportationService.getTransportationById(transportationDto.id());
 
         // Then
         assertNotNull(result);
-        assertEquals(TransportationType.FLIGHT, result.getTransportationType());
+        assertEquals(TransportationType.FLIGHT, result.transportationType());
 
-        verify(transportationRepository, times(1)).findById(transportationDto.getId());
+        verify(transportationRepository, times(1)).findById(transportationDto.id());
     }
 
     @Test
@@ -128,7 +128,7 @@ public class TransportationServiceTest {
 
         // Then
         assertThrows(EntityNotFoundException.class, () -> {
-            transportationService.getTransportationById(transportationDto.getId());
+            transportationService.getTransportationById(transportationDto.id());
         });
     }
 
@@ -152,8 +152,8 @@ public class TransportationServiceTest {
     @DisplayName("New transportation should been created succesfully")
     void shouldCreateTransportationSuccessfully() {
         // Given
-        when(locationRepository.findById(originLocationDto.getId())).thenReturn(java.util.Optional.of(originLocation));
-        when(locationRepository.findById(destinationLocationDto.getId())).thenReturn(java.util.Optional.of(destinationLocation));
+        when(locationRepository.findById(originLocationDto.id())).thenReturn(java.util.Optional.of(originLocation));
+        when(locationRepository.findById(destinationLocationDto.id())).thenReturn(java.util.Optional.of(destinationLocation));
 
         when(transportationRepository.save(any(Transportation.class))).thenReturn(transportation);
 
@@ -162,7 +162,7 @@ public class TransportationServiceTest {
 
         // Then
         assertNotNull(result);
-        assertEquals(TransportationType.FLIGHT, result.getTransportationType());
+        assertEquals(TransportationType.FLIGHT, result.transportationType());
 
         verify(transportationRepository, times(1)).save(any(Transportation.class));
     }
@@ -172,7 +172,7 @@ public class TransportationServiceTest {
             "canceled and an error should be reported.")
     void shouldThrowExceptionWhenOriginNotFound() {
         // GIVEN
-        when(locationRepository.findById(originLocationDto.getId())).thenReturn(Optional.empty());
+        when(locationRepository.findById(originLocationDto.id())).thenReturn(Optional.empty());
 
         // WHEN & THEN
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
@@ -213,8 +213,8 @@ public class TransportationServiceTest {
         Long targetId = 1L;
 
         when(transportationRepository.findById(targetId)).thenReturn(Optional.of(transportation));
-        when(locationRepository.findById(originLocationDto.getId())).thenReturn(Optional.of(originLocation));
-        when(locationRepository.findById(destinationLocationDto.getId())).thenReturn(Optional.of(destinationLocation));
+        when(locationRepository.findById(originLocationDto.id())).thenReturn(Optional.of(originLocation));
+        when(locationRepository.findById(destinationLocationDto.id())).thenReturn(Optional.of(destinationLocation));
         when(transportationRepository.save(any(Transportation.class))).thenReturn(transportation);
 
         TransportationDto updateRequestDto = TransportationDto.builder()
@@ -240,7 +240,7 @@ public class TransportationServiceTest {
 
         // WHEN & THEN
         assertThrows(EntityNotFoundException.class, () -> {
-            transportationService.updateTransportation(transportationDto.getId(), transportationDto);
+            transportationService.updateTransportation(transportationDto.id(), transportationDto);
         });
 
         verify(locationRepository, never()).findById(anyLong());
@@ -251,24 +251,24 @@ public class TransportationServiceTest {
     @DisplayName("The existing transportation should be successfully deleted.")
     void shouldDeleteTransportationSuccessfully() {
         // GIVEN
-        when(transportationRepository.existsById(transportationDto.getId())).thenReturn(true);
+        when(transportationRepository.existsById(transportationDto.id())).thenReturn(true);
 
         // WHEN
-        transportationService.deleteTransportation(transportationDto.getId());
+        transportationService.deleteTransportation(transportationDto.id());
 
         // THEN
-        verify(transportationRepository, times(1)).deleteById(transportationDto.getId());
+        verify(transportationRepository, times(1)).deleteById(transportationDto.id());
     }
 
     @Test
     @DisplayName("An error should be thrown when trying to delete an ID that doesn't exist.")
     void shouldThrowExceptionWhenTransportationNotFoundForDelete() {
         // GIVEN
-        when(transportationRepository.existsById(transportationDto.getId())).thenReturn(false);
+        when(transportationRepository.existsById(transportationDto.id())).thenReturn(false);
 
         // WHEN & THEN
         assertThrows(EntityNotFoundException.class, () ->
-                transportationService.deleteTransportation(transportationDto.getId())
+                transportationService.deleteTransportation(transportationDto.id())
         );
 
         verify(transportationRepository, never()).deleteById(any());

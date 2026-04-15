@@ -70,7 +70,7 @@ public class LocationServiceTest {
 
         // Then
         assertNotNull(result);
-        assertEquals("IST", result.getLocationCode());
+        assertEquals("IST", result.locationCode());
 
         verify(locationRepository, times(1)).save(any(Location.class));
     }
@@ -102,8 +102,8 @@ public class LocationServiceTest {
 
         // THEN
         assertNotNull(result);
-        assertEquals(targetId, result.getId());
-        assertEquals("Atatürk Havalimani", result.getName());
+        assertEquals(targetId, result.id());
+        assertEquals("Atatürk Havalimani", result.name());
 
         verify(locationRepository, times(1)).save(any());
 

@@ -11,6 +11,7 @@ import com.routemaster.RouteMaster.repository.LocationRepository;
 import com.routemaster.RouteMaster.repository.TransportationRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.cache.annotation.CacheEvict;
@@ -21,19 +22,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class TransportationService {
 
     private final TransportationRepository transportationRepository;
     private final LocationRepository locationRepository;
     private final TransportationMapper transportationMapper;
-
-    public TransportationService(TransportationRepository transportationRepository,
-            LocationRepository locationRepository, TransportationMapper transportationMapper) {
-        this.transportationRepository = transportationRepository;
-        this.locationRepository = locationRepository;
-        this.transportationMapper = transportationMapper;
-    }
 
     @Cacheable(value = "transportations", key = "#id")
     public TransportationDto getTransportationById(Long id) {
@@ -87,9 +82,9 @@ public class TransportationService {
     }
 
     private void validateAndSetLocations(Transportation transportation, TransportationDto dto) {
-        Location origin = locationRepository.findById(dto.getOrigin().getId())
+        Location origin = locationRepository.findById(dto.origin().id())
                 .orElseThrow(() -> new EntityNotFoundException("Origin location not found"));
-        Location destination = locationRepository.findById(dto.getDestination().getId())
+        Location destination = locationRepository.findById(dto.destination().id())
                 .orElseThrow(() -> new EntityNotFoundException("Destination location not found"));
 
         transportation.setOrigin(origin);

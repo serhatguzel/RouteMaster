@@ -35,9 +35,9 @@ export const EXTERNAL_URLS = {
 
 export const API_ENDPOINTS = {
     AUTH: {
-        LOGIN: '/api/auth/login',
-        LOGOUT: '/api/auth/logout',
-        REFRESH: '/api/auth/refresh'
+        LOGIN: '/api/v1/auth/login',
+        LOGOUT: '/api/v1/auth/logout',
+        REFRESH: '/api/v1/auth/refresh'
     },
     LOCATIONS: {
         BASE: '/locations'

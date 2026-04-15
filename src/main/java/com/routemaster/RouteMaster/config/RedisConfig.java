@@ -14,46 +14,49 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
+import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
 public class RedisConfig {
 
-    @Bean
-    public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, String> template = new RedisTemplate<>();
-        template.setConnectionFactory(connectionFactory);
+        @Value("${cache.default-ttl:30}")
+        private long cacheDefaultTtl;
 
-        // Key and Value String (Refresh Token: UserId )
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new StringRedisSerializer());
+        @Bean
+        public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory connectionFactory) {
+                RedisTemplate<String, String> template = new RedisTemplate<>();
+                template.setConnectionFactory(connectionFactory);
 
-        return template;
-    }
+                // Key and Value String (Refresh Token: UserId )
+                template.setKeySerializer(new StringRedisSerializer());
+                template.setValueSerializer(new StringRedisSerializer());
 
-    @Bean
-    public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.activateDefaultTyping(
-                BasicPolymorphicTypeValidator.builder()
-                        .allowIfBaseType(Object.class)
-                        .build(),
-                ObjectMapper.DefaultTyping.EVERYTHING,
-                JsonTypeInfo.As.PROPERTY
-        );
+                return template;
+        }
 
-        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(objectMapper);
+        @Bean
+        public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.activateDefaultTyping(
+                                BasicPolymorphicTypeValidator.builder()
+                                                .allowIfBaseType(Object.class)
+                                                .build(),
+                                ObjectMapper.DefaultTyping.EVERYTHING,
+                                JsonTypeInfo.As.PROPERTY);
 
-        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(30))
-                .serializeKeysWith(
-                        RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-                .serializeValuesWith(
-                        RedisSerializationContext.SerializationPair.fromSerializer(serializer))
-                .disableCachingNullValues();
+                GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(objectMapper);
 
-        return RedisCacheManager.builder(connectionFactory)
-                .cacheDefaults(config)
-                .build();
-    }
+                RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
+                                .entryTtl(Duration.ofMinutes(cacheDefaultTtl))
+                                .serializeKeysWith(
+                                                RedisSerializationContext.SerializationPair
+                                                                .fromSerializer(new StringRedisSerializer()))
+                                .serializeValuesWith(
+                                                RedisSerializationContext.SerializationPair.fromSerializer(serializer))
+                                .disableCachingNullValues();
+
+                return RedisCacheManager.builder(connectionFactory)
+                                .cacheDefaults(config)
+                                .build();
+        }
 }
-

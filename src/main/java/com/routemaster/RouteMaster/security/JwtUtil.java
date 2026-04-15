@@ -21,10 +21,11 @@ public class JwtUtil {
     private Long jwtExpiration;
 
     public String generateToken(String username) {
+        var now = System.currentTimeMillis();
         return Jwts.builder()
                 .subject(username)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .issuedAt(new Date(now))
+                .expiration(new Date(now + jwtExpiration))
                 .signWith(getSignInKey())
                 .compact();
     }
